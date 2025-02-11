@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { readFile } from 'fs/promises';
-import { Logger } from './Logger';
+import { Logger } from './Logger.js';
 
 @Service()
 export class IO {

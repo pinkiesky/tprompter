@@ -1,8 +1,8 @@
-import Container from 'typedi';
-import { WriteUnitTestsPrompt } from './WriteUnitTestsPrompt';
-import { StdinDataReader } from '../utils/StdinDataReader';
-import { IO } from '../utils/IO';
-import * as enrichTextDataUtils from '../utils/enrichTextData';
+import { Container } from 'typedi';
+import { WriteUnitTestsPrompt } from './WriteUnitTestsPrompt.js';
+import { StdinDataReader } from '../utils/StdinDataReader.js';
+import { IO } from '../utils/IO.js';
+import * as enrichTextDataUtils from '../utils/enrichTextData.js';
 
 describe(WriteUnitTestsPrompt.name, () => {
   let prompt: WriteUnitTestsPrompt;

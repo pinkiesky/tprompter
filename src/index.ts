@@ -2,14 +2,16 @@ import 'reflect-metadata';
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { PromptsCatalog } from './prompts';
-import Container from 'typedi';
+import { Container } from 'typedi';
+import { PromptsCatalog } from './prompts/PromptsCatalog.js';
+import { Actions, AvailableActions } from './actions/Actions.js';
 
 async function setupContainer(): Promise<void> {
 }
 
 function main(): void {
   const catalog = Container.get(PromptsCatalog);
+  const actions = Container.get(Actions);
 
   // Build the CLI with yargs
   yargs(hideBin(process.argv))
@@ -39,15 +41,15 @@ function main(): void {
           })
           .option('after', {
             describe: 'What to do after generating the prompt',
-            choices: ['open', 'clipboard', 'print'] as const,
-            default: 'clipboard',
+            choices: Object.values(AvailableActions) as AvailableActions[],
+            default: AvailableActions.COPY_TO_CLIPBOARD,
           });
       },
       async ({ name, after }) => {
         const prompt = await catalog.getPrompt(name);
         const content = await prompt.generate();
 
-        console.log(content);
+        await actions.evaluate(after as AvailableActions, content);
       },
     )
     .help()

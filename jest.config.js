@@ -1,9 +1,8 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
-module.exports = {
+export default {
+  preset: "ts-jest",
+  resolver: "ts-jest-resolver",
   testEnvironment: 'node',
-  transform: {
-    '^.+.tsx?$': ['ts-jest', {}],
-  },
   globalSetup: './tests/setup.ts',
-  setupFilesAfterEnv: ['reflect-metadata'],
+  setupFilesAfterEnv: ['reflect-metadata']
 };

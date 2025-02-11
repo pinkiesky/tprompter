@@ -1,8 +1,8 @@
-import { Service } from 'typedi';
-import { enrichTextData } from '../utils/enrichTextData';
-import { StdinDataReader } from '../utils/StdinDataReader';
-import { IO } from '../utils/IO';
-import { IPrompt } from '.';
+import { Service, Container } from 'typedi';
+import { enrichTextData } from '../utils/enrichTextData.js';
+import { StdinDataReader } from '../utils/StdinDataReader.js';
+import { IO } from '../utils/IO.js';
+import { IPrompt } from './index.js';
 
 @Service()
 export class WriteUnitTestsPrompt implements IPrompt {

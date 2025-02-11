@@ -1,5 +1,5 @@
-import { fork } from 'child_process';
-import path from 'path';
+import { fork } from 'node:child_process';
+import path from 'node:path';
 import { Service } from 'typedi';
 
 @Service()
@@ -8,7 +8,8 @@ export class StdinDataReader {
     return new Promise((resolve, reject) => {
       console.log(`${placeholder} (Press CTRL+D to finish):`);
 
-      const childPath = path.resolve(__dirname, 'readData.process.js');
+      const dirname = path.dirname(new URL(import.meta.url).pathname);
+      const childPath = path.resolve(dirname, 'readData.process.js');
 
       const child = fork(childPath, [], {
         stdio: ['inherit', 'pipe', 'pipe', 'ipc'],

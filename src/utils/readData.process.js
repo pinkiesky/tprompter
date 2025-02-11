@@ -1,4 +1,4 @@
-const process = require('process');
+import process from 'node:process';
 
 function runChild() {  
   process.stdin.setEncoding('utf8');

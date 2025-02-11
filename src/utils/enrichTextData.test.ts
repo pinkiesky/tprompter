@@ -1,4 +1,4 @@
-import { enrichTextData, getFilePathsFromLine } from './enrichTextData';
+import { enrichTextData, getFilePathsFromLine } from './enrichTextData.js';
 
 describe('enrichTextData', () => {
   describe('getFilePathsFromLine', () => {

@@ -2,10 +2,11 @@
   "name": "tprompter",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "exports": "./index.js",
+  "type": "module",
   "scripts": {
-    "test": "jest",
-    "start": "ts-node src/index.ts",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "start": "ts-node --esm ./src/index.ts",
     "format": "prettier --write ."
   },
   "keywords": [],
@@ -17,10 +18,13 @@
     "prettier": "^3.4.2",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {
+    "clipboardy": "^4.0.0",
     "reflect-metadata": "^0.2.2",
+    "ts-jest-resolver": "^2.0.1",
     "typedi": "^0.10.0"
   }
 }

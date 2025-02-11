@@ -8,6 +8,7 @@ import { Container } from 'typedi';
 import { AvailableActions } from './actions/Actions.js';
 import { MainController } from './MainController.js';
 import { setupContainer } from './di/index.js';
+import { LoggerService } from './logger/index.js';
 
 const afterDescription = {
   describe: 'What to do after generating the prompt',
@@ -15,12 +16,18 @@ const afterDescription = {
   default: AvailableActions.COPY_TO_CLIPBOARD,
 };
 
-function main(): void {
+async function main(): Promise<void> {
   const ctrl = Container.get(MainController);
+  const rootLogger = Container.get(LoggerService);
 
-  // Build the CLI with yargs
-  yargs(hideBin(process.argv))
+  const params = await yargs(hideBin(process.argv))
     .scriptName('pprompter')
+    .boolean('verbose')
+    .alias('v', 'verbose')
+    .describe('verbose', 'Increase verbosity')
+    .boolean('quiet')
+    .alias('q', 'quiet')
+    .describe('quiet', 'Do not output anything')
     .usage('$0 <command> [options]')
     .command(
       'list',
@@ -32,7 +39,7 @@ function main(): void {
           .then((prompts) => {
             prompts.forEach((p) => console.log(p));
           })
-          .catch((err) => console.error(err));
+          .catch((err) => rootLogger.root.error(err));
       },
     )
     .command(
@@ -48,7 +55,7 @@ function main(): void {
           .option('after', afterDescription);
       },
       ({ name, after }) => {
-        ctrl.generateAndEvaluate(name, after).catch((err) => console.error(err));
+        ctrl.generateAndEvaluate(name, after).catch((err) => rootLogger.root.error(err));
       },
     )
     .command(
@@ -64,13 +71,23 @@ function main(): void {
           .option('after', afterDescription);
       },
       ({ index, after }) => {
-        ctrl.getFromArchiveByIndexAndEvaluate(index, after).catch((err) => console.error(err));
+        ctrl
+          .getFromArchiveByIndexAndEvaluate(index, after)
+          .catch((err) => rootLogger.root.error(err));
       },
     )
     .help()
     .demandCommand(1, 'You need at least one command before moving on')
     .strict()
     .parse();
+
+  if (params.verbose) {
+    rootLogger.setLevel('debug');
+  } else if (params.quiet) {
+    rootLogger.setLevel('error');
+  } else {
+    rootLogger.setLevel('info');
+  }
 }
 
 setupContainer()

@@ -1,6 +1,8 @@
 import { fork } from 'node:child_process';
 import path from 'node:path';
 import { StdinDataReader } from './StdinDataReader.js';
+import { InjectLogger } from '../logger/logger.decorator.js';
+import { Logger } from '../logger/index.js';
 
 /**
  * Implementation of the StdinDataReader interface that reads data from the standard input.
@@ -9,6 +11,8 @@ import { StdinDataReader } from './StdinDataReader.js';
  * So we need to mock the `readData` method in tests and avoid any mention of `import.meta.url` and thus mention of this file.
  */
 export class StdinDataReaderImpl implements StdinDataReader {
+  constructor(@InjectLogger('StdinDataReader') private logger: Logger) {}
+
   readData(placeholder = 'Input required'): Promise<string> {
     return new Promise((resolve, reject) => {
       console.log(`${placeholder} (Press CTRL+D to finish):`);
@@ -31,14 +35,15 @@ export class StdinDataReaderImpl implements StdinDataReader {
 
       child.on('close', (code) => {
         if (code !== 0) {
-          console.error(`Child process exited with code ${code}`);
-          console.error('Error output:', errorOutput);
+          this.logger.error(`Child process exited with code ${code}`);
+          this.logger.error(`Error output: ${errorOutput}`);
+
           reject(new Error(`Child process exited with code ${code}`));
         }
       });
 
       child.on('error', (err) => {
-        console.error('Failed to start child process:', err);
+        this.logger.error(`Child process error: ${err}`);
         reject(err);
       });
     });

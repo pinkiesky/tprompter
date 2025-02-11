@@ -3,6 +3,8 @@ import { PromptsCatalog } from './prompts/PromptsCatalog.js';
 import { Actions, AvailableActions } from './actions/Actions.js';
 import { ArchiveService } from './archive/Archive.js';
 import { countTokens } from 'gpt-tokenizer';
+import { InjectLogger } from './logger/logger.decorator.js';
+import { Logger } from './logger/index.js';
 
 @Service()
 export class MainController {
@@ -10,11 +12,13 @@ export class MainController {
     private catalog: PromptsCatalog,
     private actions: Actions,
     private archive: ArchiveService,
+    @InjectLogger('MainController') private logger: Logger,
   ) {}
 
   reportTokensCount(content: string): void {
     const tokensCount = countTokens(content);
-    console.log('Tokens count:', tokensCount);
+
+    this.logger.info(`Tokens count: ${tokensCount}`);
   }
 
   async listPrompts(): Promise<string[]> {

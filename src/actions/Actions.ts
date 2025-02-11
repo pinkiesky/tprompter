@@ -1,6 +1,8 @@
 import { Service } from 'typedi';
 import { runDisposableServer } from '../utils/disposableServer/index.js';
 import open from 'open';
+import { InjectLogger } from '../logger/logger.decorator.js';
+import { Logger } from '../logger/index.js';
 
 export enum AvailableActions {
   PRINT_TO_CONSOLE = 'print',
@@ -10,6 +12,8 @@ export enum AvailableActions {
 
 @Service()
 export class Actions {
+  constructor(@InjectLogger('Actions') private logger: Logger) {}
+
   private actionsMap: Record<AvailableActions, (s: string) => void> = {
     [AvailableActions.PRINT_TO_CONSOLE]: this.printToConsole,
     [AvailableActions.OPEN_IN_BROWSER]: this.openInBrowser,
@@ -33,7 +37,7 @@ export class Actions {
     const server = await runDisposableServer(content);
 
     const gptUrl = `https://chatgpt.com/#url=${server.url}`;
-    open(gptUrl).catch(console.error);
+    open(gptUrl).catch(this.logger.error);
   }
 
   async copyToClipboard(content: string): Promise<void> {

@@ -29,7 +29,7 @@ ${await enrichTextData(inputCode, enricher)}
 \`\`\`
 
 Your task is to:
-  1. Review the codebase and provide feedback on the code quality, maintainability, and best practices.
+  1. Review the codebase and provide short feedback on the code quality, maintainability, and best practices.
   2. Identify potential bugs, security vulnerabilities, and performance issues.
   3. Suggest improvements, refactorings, and optimizations where necessary.
   4. Find bad variable names, magic numbers, and other code smells.

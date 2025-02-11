@@ -1,15 +1,15 @@
 import http from 'node:http';
 
+const WAIT_BEFORE_CLOSE_MS = 120000; // 2 minutes
+
 export function runDisposableServer(
   content: string,
-  mbPort?: number,
+  preferredPort?: number,
 ): Promise<{
   server: http.Server;
   port: number;
   url: string;
 }> {
-  const port = mbPort ? mbPort : Math.floor(Math.random() * 50000) + 10000;
-
   const server = http.createServer(
     // @ts-ignore
     (req, res) => {
@@ -37,15 +37,17 @@ export function runDisposableServer(
       }
     });
 
-    server.listen(port, () => {
+    server.listen(preferredPort || 0, () => {
+      const actualPort = (server.address() as any).port;
+
       timeout = setTimeout(() => {
         server.close();
-      }, 120000);
+      }, WAIT_BEFORE_CLOSE_MS);
 
       resolve({
         server,
-        port,
-        url: `http://localhost:${port}`,
+        port: actualPort,
+        url: `http://localhost:${actualPort}`,
       });
     });
   });

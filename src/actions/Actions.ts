@@ -10,16 +10,14 @@ export enum AvailableActions {
 
 @Service()
 export class Actions {
-  constructor() {}
+  private actionsMap: Record<AvailableActions, (s: string) => void> = {
+    [AvailableActions.PRINT_TO_CONSOLE]: this.printToConsole,
+    [AvailableActions.OPEN_IN_BROWSER]: this.openInBrowser,
+    [AvailableActions.COPY_TO_CLIPBOARD]: this.copyToClipboard,
+  };
 
   async evaluate(strategy: AvailableActions, content: string): Promise<void> {
-    const actionsMap: Record<AvailableActions, Function> = {
-      [AvailableActions.PRINT_TO_CONSOLE]: this.printToConsole,
-      [AvailableActions.OPEN_IN_BROWSER]: this.openInBrowser,
-      [AvailableActions.COPY_TO_CLIPBOARD]: this.copyToClipboard,
-    };
-
-    const action = actionsMap[strategy];
+    const action = this.actionsMap[strategy];
     if (!action) {
       throw new Error(`Unknown action: ${strategy}`);
     }

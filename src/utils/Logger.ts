@@ -1,9 +1,8 @@
-import { Service } from "typedi";
+import { Service } from 'typedi';
 
 @Service()
 export class Logger {
-  constructor() {
-  }
+  constructor() {}
   info(message: string): void {
     console.log(message);
   }

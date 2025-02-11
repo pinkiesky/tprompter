@@ -8,7 +8,10 @@ import { IPrompt } from './index.js';
 export class WriteUnitTestsPrompt implements IPrompt {
   name = 'write_unit_tests';
 
-  constructor(private stdinReader: StdinDataReader, private io: IO) {}
+  constructor(
+    private stdinReader: StdinDataReader,
+    private io: IO,
+  ) {}
 
   async generate(): Promise<string> {
     const inputCode = await this.stdinReader.readData('Enter the TypeScript + NestJS code:');

@@ -62,12 +62,26 @@ describe(WriteUnitTestsPrompt.name, () => {
 
       // Assert
       expect(mockStdinReader.readData).toHaveBeenCalledTimes(2);
-      expect(mockStdinReader.readData).toHaveBeenNthCalledWith(1, 'Enter the TypeScript + NestJS code:');
-      expect(mockStdinReader.readData).toHaveBeenNthCalledWith(2, 'Enter the Jest unit test examples:');
+      expect(mockStdinReader.readData).toHaveBeenNthCalledWith(
+        1,
+        'Enter the TypeScript + NestJS code:',
+      );
+      expect(mockStdinReader.readData).toHaveBeenNthCalledWith(
+        2,
+        'Enter the Jest unit test examples:',
+      );
 
       expect(enrichTextDataUtils.enrichTextData).toHaveBeenCalledTimes(2);
-      expect(enrichTextDataUtils.enrichTextData).toHaveBeenNthCalledWith(1, mockInputCode, mockIO.readFile);
-      expect(enrichTextDataUtils.enrichTextData).toHaveBeenNthCalledWith(2, mockInputExamples, mockIO.readFile);
+      expect(enrichTextDataUtils.enrichTextData).toHaveBeenNthCalledWith(
+        1,
+        mockInputCode,
+        mockIO.readFile,
+      );
+      expect(enrichTextDataUtils.enrichTextData).toHaveBeenNthCalledWith(
+        2,
+        mockInputExamples,
+        mockIO.readFile,
+      );
 
       // Verify the generated prompt structure
       expect(result).toContain('I have the following TypeScript code:');
@@ -102,9 +116,7 @@ describe(WriteUnitTestsPrompt.name, () => {
 
     it('should maintain consistent indentation in the generated prompt', async () => {
       // Arrange
-      mockStdinReader.readData
-        .mockResolvedValueOnce('code')
-        .mockResolvedValueOnce('example');
+      mockStdinReader.readData.mockResolvedValueOnce('code').mockResolvedValueOnce('example');
       (enrichTextDataUtils.enrichTextData as jest.Mock)
         .mockResolvedValueOnce('enriched:code')
         .mockResolvedValueOnce('enriched:example');
@@ -114,8 +126,8 @@ describe(WriteUnitTestsPrompt.name, () => {
 
       // Assert
       const lines = result.split('\n');
-      const taskLines = lines.filter(line => line.includes('      '));
-      expect(taskLines.every(line => line.startsWith('        '))).toBe(true);
+      const taskLines = lines.filter((line) => line.includes('      '));
+      expect(taskLines.every((line) => line.startsWith('        '))).toBe(true);
     });
   });
 });

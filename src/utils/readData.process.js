@@ -1,6 +1,6 @@
 import process from 'node:process';
 
-function runChild() {  
+function runChild() {
   process.stdin.setEncoding('utf8');
 
   let data = '';

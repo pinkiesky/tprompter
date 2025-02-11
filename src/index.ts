@@ -5,8 +5,11 @@ import { hideBin } from 'yargs/helpers';
 import { Container } from 'typedi';
 import { PromptsCatalog } from './prompts/PromptsCatalog.js';
 import { Actions, AvailableActions } from './actions/Actions.js';
+import { StdinDataReader } from './utils/StdinDataReader.js';
+import { StdinDataReaderImpl } from './utils/StdinDataReader.impl.js';
 
 async function setupContainer(): Promise<void> {
+  Container.set(StdinDataReader, new StdinDataReaderImpl());
 }
 
 function main(): void {
@@ -58,4 +61,6 @@ function main(): void {
     .parse();
 }
 
-setupContainer().then(main).catch((err) => console.error(err));
+setupContainer()
+  .then(main)
+  .catch((err) => console.error(err));

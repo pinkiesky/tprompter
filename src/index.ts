@@ -22,7 +22,7 @@ async function main(): Promise<void> {
   const rootLogger = Container.get(LoggerService);
 
   const params = await yargs(hideBin(process.argv))
-    .scriptName('pprompter')
+    .scriptName('tprompter')
     .boolean('verbose')
     .alias('v', 'verbose')
     .describe('verbose', 'Increase verbosity')

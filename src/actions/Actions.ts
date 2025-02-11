@@ -26,6 +26,7 @@ export class Actions {
       throw new Error(`Unknown action: ${strategy}`);
     }
 
+    this.logger.info(`Executing action: ${strategy}`);
     await action.call(this, content);
   }
 

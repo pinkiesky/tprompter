@@ -1,8 +1,8 @@
-import { Service, Container } from 'typedi';
-import { enrichTextData } from '../utils/enrichTextData.js';
+import { Service } from 'typedi';
 import { StdinDataReader } from '../utils/StdinDataReader.js';
 import { IO } from '../utils/IO.js';
 import { IPrompt } from './index.js';
+import { TextDataEnricher } from '../textDataEnricher/TextDataEnricher.js';
 
 @Service()
 export class StarterPrompt implements IPrompt {
@@ -10,27 +10,18 @@ export class StarterPrompt implements IPrompt {
 
   constructor(
     private stdinReader: StdinDataReader,
-    private io: IO,
+    private enricher: TextDataEnricher,
   ) {}
 
-  isAcceptableExtension(file: string): boolean {
-    const exts = ['.ts', '.svelte', '.js', '.jsx', '.html', '.css'];
-    return exts.some((ext) => file.endsWith(ext));
-  }
-
   async generate(): Promise<string> {
-    const inputCode = await this.stdinReader.readData('Enter the source code files:');
-
-    const enricher = async (path: string) => {
-      const d = await this.io.readAllFilesRecursive(path, (p) => this.isAcceptableExtension(p));
-      return d.flatMap(({ data, path }) => ['----', `FILE: ${path}\n`, data]).join('\n');
-    };
+    const inputCodeRaw = await this.stdinReader.readData('Enter the source code files:');
+    const inputCode = await this.enricher.enrichRawInput(inputCodeRaw.trim());
 
     return `
 You are a senior developer at a software company. You are provided with the following code:
 
 \`\`\`
-${await enrichTextData(inputCode, enricher)}
+${inputCode}
 \`\`\`
 
 I will write you questions or ask for favors based on the code provided.

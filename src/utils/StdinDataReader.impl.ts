@@ -6,8 +6,7 @@ import { Logger } from '../logger/index.js';
 
 /**
  * Implementation of the StdinDataReader interface that reads data from the standard input.
- * The reason why we need StdinDataReader is that Jest doen't support bloody `import.meta.url`
- * (I was forced to ESM I swear)
+ * The reason why we need StdinDataReader is that Jest doen't support `import.meta.url`
  * So we need to mock the `readData` method in tests and avoid any mention of `import.meta.url` and thus mention of this file.
  */
 export class StdinDataReaderImpl implements StdinDataReader {

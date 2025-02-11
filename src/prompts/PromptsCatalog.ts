@@ -15,7 +15,6 @@ export class PromptsCatalog {
       Container.get(CodeReviewPrompt),
       Container.get(WriteBoilerplatePrompt),
       Container.get(StarterPrompt),
-      Container.get(CodeReviewPrompt),
     ]);
   }
 

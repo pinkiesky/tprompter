@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { readFile, mkdir, writeFile, readdir, stat } from 'fs/promises';
-import { Stats } from 'fs';
+import { Stats, Dirent } from 'fs';
 
 @Service()
 export class IO {
@@ -39,6 +39,10 @@ export class IO {
     return [];
   }
 
+  async readdir(path: string): Promise<Dirent[]> {
+    return readdir(path, { withFileTypes: true });
+  }
+
   async readFile(path: string): Promise<string> {
     return readFile(path, 'utf-8');
   }
@@ -54,5 +58,18 @@ export class IO {
   async fileList(folder: string, extension?: string): Promise<string[]> {
     const files = await readdir(folder);
     return extension ? files.filter((file) => file.endsWith(extension)) : files;
+  }
+
+  async stat(path: string): Promise<Stats> {
+    return stat(path);
+  }
+
+  async exists(path: string): Promise<boolean> {
+    try {
+      await this.stat(path);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

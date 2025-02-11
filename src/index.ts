@@ -3,18 +3,17 @@ import 'reflect-metadata';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { Container } from 'typedi';
-import { PromptsCatalog } from './prompts/PromptsCatalog.js';
-import { Actions, AvailableActions } from './actions/Actions.js';
+import { AvailableActions } from './actions/Actions.js';
 import { StdinDataReader } from './utils/StdinDataReader.js';
 import { StdinDataReaderImpl } from './utils/StdinDataReader.impl.js';
+import { MainController } from './MainController.js';
 
 async function setupContainer(): Promise<void> {
   Container.set(StdinDataReader, new StdinDataReaderImpl());
 }
 
 function main(): void {
-  const catalog = Container.get(PromptsCatalog);
-  const actions = Container.get(Actions);
+  const ctrl = Container.get(MainController);
 
   // Build the CLI with yargs
   yargs(hideBin(process.argv))
@@ -27,9 +26,12 @@ function main(): void {
         /* No additional arguments for 'list' command */
       },
       () => {
-        catalog.listPrompts().then((prompts) => {
-          prompts.forEach((p) => console.log(p));
-        });
+        ctrl
+          .listPrompts()
+          .then((prompts) => {
+            prompts.forEach((p) => console.log(p));
+          })
+          .catch((err) => console.error(err));
       },
     )
     .command(
@@ -48,11 +50,8 @@ function main(): void {
             default: AvailableActions.COPY_TO_CLIPBOARD,
           });
       },
-      async ({ name, after }) => {
-        const prompt = await catalog.getPrompt(name);
-        const content = await prompt.generate();
-
-        await actions.evaluate(after as AvailableActions, content);
+      ({ name, after }) => {
+        ctrl.generateAndEvaluate(name, after).catch((err) => console.error(err));
       },
     )
     .help()

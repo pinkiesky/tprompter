@@ -10,7 +10,7 @@
   "bin": "./dist/index.js",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "start": "ts-node --esm ./src/index.ts",
+    "start": "tsc && node ./dist/index.js",
     "format": "prettier --write .",
     "clean": "rm -rf ./dist/*",
     "build": "npm run clean && tsc && npm run copyfiles && chmod +x ./dist/index.js",
@@ -27,8 +27,6 @@
     "prettier": "^3.4.2",
     "ts-jest": "^29.2.5",
     "ts-jest-resolver": "^2.0.1",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {

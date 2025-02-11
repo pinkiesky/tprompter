@@ -6,5 +6,8 @@ import { PathsToken } from './tokens.js';
 
 export async function setupContainer(): Promise<void> {
   Container.set<Paths>(PathsToken, envPaths('pprompter'));
-  Container.set(StdinDataReader, StdinDataReaderImpl);
+  Container.set({
+    id: StdinDataReader,
+    type: StdinDataReaderImpl,
+  });
 }

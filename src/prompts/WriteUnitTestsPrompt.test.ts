@@ -17,6 +17,7 @@ describe(WriteUnitTestsPrompt.name, () => {
 
     mockIO = {
       readFile: jest.fn(),
+      readAllFilesRecursive: jest.fn(),
     } as unknown as jest.Mocked<IO>;
 
     // Set up Container
@@ -75,12 +76,12 @@ describe(WriteUnitTestsPrompt.name, () => {
       expect(enrichTextDataUtils.enrichTextData).toHaveBeenNthCalledWith(
         1,
         mockInputCode,
-        mockIO.readFile,
+        expect.any(Function),
       );
       expect(enrichTextDataUtils.enrichTextData).toHaveBeenNthCalledWith(
         2,
         mockInputExamples,
-        mockIO.readFile,
+        expect.any(Function),
       );
 
       // Verify the generated prompt structure

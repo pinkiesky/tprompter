@@ -1,15 +1,11 @@
 import { Container } from 'typedi';
 import { IO } from './IO.js';
 import * as fs from 'node:fs';
-import { Logger } from './Logger.js';
 
 describe(IO.name, () => {
   let io: IO;
 
   beforeEach(() => {
-    Container.set(Logger, {
-      info: jest.fn(),
-    });
     io = Container.get(IO);
   });
 

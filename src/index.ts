@@ -9,6 +9,7 @@ import { AvailableActions } from './actions/Actions.js';
 import { MainController } from './MainController.js';
 import { setupContainer } from './di/index.js';
 import { LoggerService } from './logger/index.js';
+import { BUILD_INFO } from './buildInfo.js';
 
 const afterDescription = {
   describe: 'What to do after generating the prompt',
@@ -74,6 +75,14 @@ async function main(): Promise<void> {
         ctrl
           .getFromArchiveByIndexAndEvaluate(index, after)
           .catch((err) => rootLogger.root.error(err));
+      },
+    )
+    .command(
+      'version',
+      'Show version',
+      () => {},
+      () => {
+        rootLogger.root.info(`Version: ${BUILD_INFO.version} (${BUILD_INFO.gitHash})`);
       },
     )
     .help()

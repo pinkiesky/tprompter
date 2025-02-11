@@ -13,8 +13,9 @@
     "start": "tsc && node ./dist/index.js",
     "format": "prettier --write .",
     "clean": "rm -rf ./dist/*",
-    "build": "npm run clean && tsc && npm run copyfiles && chmod +x ./dist/index.js",
-    "copyfiles": "cp -r ./src/utils/readData.process.js ./dist/utils/readData.process.js"
+    "build": "npm run clean && tsc && npm run copyfiles && chmod +x ./dist/index.js && npm run generate:buildInfo",
+    "copyfiles": "cp -r ./src/utils/readData.process.js ./dist/utils/readData.process.js",
+    "generate:buildInfo": "node ./scripts/generateBuildInfo.cjs"
   },
   "keywords": [],
   "author": "",

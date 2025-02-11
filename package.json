@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "clipboardy": "^4.0.0",
+    "env-paths": "^3.0.0",
     "reflect-metadata": "^0.2.2",
     "ts-jest-resolver": "^2.0.1",
     "typedi": "^0.10.0"

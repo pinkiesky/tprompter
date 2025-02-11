@@ -12,7 +12,7 @@ export enum AvailableActions {
 
 @Service()
 export class Actions {
-  constructor(@InjectLogger('Actions') private logger: Logger) {}
+  constructor(@InjectLogger(Actions) private logger: Logger) {}
 
   private actionsMap: Record<AvailableActions, (s: string) => void> = {
     [AvailableActions.PRINT_TO_CONSOLE]: this.printToConsole,
@@ -38,7 +38,7 @@ export class Actions {
     const server = await runDisposableServer(content);
 
     const gptUrl = `https://chatgpt.com/#url=${server.url}`;
-    open(gptUrl).catch(this.logger.error);
+    open(gptUrl).catch((err) => this.logger.error(err));
   }
 
   async copyToClipboard(content: string): Promise<void> {

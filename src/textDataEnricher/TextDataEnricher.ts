@@ -24,7 +24,7 @@ export class TextDataEnricher {
 
   constructor(
     private io: IO,
-    @InjectLogger('MainController') private logger: Logger,
+    @InjectLogger(TextDataEnricher) private logger: Logger,
   ) {}
 
   async enrichRawInput(data: string, config = DEFAULT_CONFIG): Promise<string> {

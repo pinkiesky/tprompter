@@ -1,12 +1,11 @@
 import { Service } from 'typedi';
-import { enrichTextData } from '../utils/enrichTextData.js';
 import { StdinDataReader } from '../utils/StdinDataReader.js';
 import { IPrompt } from './index.js';
 import { TextDataEnricher } from '../textDataEnricher/TextDataEnricher.js';
 
 @Service()
 export class CodeReviewPrompt implements IPrompt {
-  name = 'code_review_prompt';
+  name = 'code_review';
 
   constructor(
     private stdinReader: StdinDataReader,

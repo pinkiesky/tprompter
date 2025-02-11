@@ -10,7 +10,7 @@ import { Logger } from '../logger/index.js';
  * So we need to mock the `readData` method in tests and avoid any mention of `import.meta.url` and thus mention of this file.
  */
 export class StdinDataReaderImpl implements StdinDataReader {
-  constructor(@InjectLogger('StdinDataReader') private logger: Logger) {}
+  constructor(@InjectLogger(StdinDataReaderImpl) private logger: Logger) {}
 
   readData(placeholder = 'Input required'): Promise<string> {
     return new Promise((resolve, reject) => {

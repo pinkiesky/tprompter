@@ -12,7 +12,7 @@ export class MainController {
     private catalog: PromptsCatalog,
     private actions: Actions,
     private archive: ArchiveService,
-    @InjectLogger('MainController') private logger: Logger,
+    @InjectLogger(MainController) private logger: Logger,
   ) {}
 
   reportTokensCount(content: string): void {

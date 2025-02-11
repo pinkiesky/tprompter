@@ -1,6 +1,5 @@
 import { Service } from 'typedi';
 import { StdinDataReader } from '../utils/StdinDataReader.js';
-import { IO } from '../utils/IO.js';
 import { IPrompt } from './index.js';
 import { TextDataEnricher } from '../textDataEnricher/TextDataEnricher.js';
 

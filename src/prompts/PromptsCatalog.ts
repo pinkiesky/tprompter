@@ -2,7 +2,7 @@ import { Container, Service } from 'typedi';
 import { WriteUnitTestsPrompt } from './WriteUnitTestsPrompt.js';
 import { IPrompt } from './index.js';
 import { CodeReviewPrompt } from './CodeReviewPrompt.js';
-import { WriteBoilerplatePrompt } from './WriteBoilerplanePrompt.js';
+import { WriteBoilerplatePrompt } from './WriteBoilerplatePrompt.js';
 import { StarterPrompt } from './StarterPrompt.js';
 
 @Service()

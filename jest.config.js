@@ -4,4 +4,6 @@ module.exports = {
   transform: {
     '^.+.tsx?$': ['ts-jest', {}],
   },
+  globalSetup: './tests/setup.ts',
+  setupFilesAfterEnv: ['reflect-metadata'],
 };

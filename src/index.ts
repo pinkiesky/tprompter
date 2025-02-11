@@ -1,9 +1,15 @@
+import 'reflect-metadata';
+
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { PromptsCatalog } from './prompts';
+import Container from 'typedi';
+
+async function setupContainer(): Promise<void> {
+}
 
 function main(): void {
-  const catalog = new PromptsCatalog();
+  const catalog = Container.get(PromptsCatalog);
 
   // Build the CLI with yargs
   yargs(hideBin(process.argv))
@@ -50,4 +56,4 @@ function main(): void {
     .parse();
 }
 
-main();
+setupContainer().then(main).catch((err) => console.error(err));

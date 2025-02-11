@@ -25,7 +25,7 @@ export class ArchiveService {
     const folder = await this.getArchiveFolder();
     const unixTimestamp = Date.now();
 
-    const path = join(folder, `${unixTimestamp}-${this.counter++}-.json`);
+    const path = join(folder, `${unixTimestamp}-${this.counter++}.json`);
     const content = JSON.stringify(
       { ...record, createdAt: new Date().toISOString() },
       undefined,

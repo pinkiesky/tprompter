@@ -13,7 +13,7 @@ export class StdinDataReaderImpl implements StdinDataReader {
     return new Promise((resolve, reject) => {
       console.log(`${placeholder} (Press CTRL+D to finish):`);
 
-      const dirname = path.dirname(new URL(import.meta.url).pathname);
+      const dirname = path.dirname(decodeURI(new URL(import.meta.url).pathname));
       const childPath = path.resolve(dirname, 'readData.process.js');
 
       const child = fork(childPath, [], {

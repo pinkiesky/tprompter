@@ -17,17 +17,22 @@ export class WriteUnitTestsPrompt implements IPrompt {
     const inputCode = await this.stdinReader.readData('Enter the TypeScript + NestJS code:');
     const inputExamples = await this.stdinReader.readData('Enter the Jest unit test examples:');
 
+    const enricher = async (path: string) => {
+      const d = await this.io.readAllFilesRecursive(path, (p) => p.toLowerCase().endsWith('.ts'));
+      return d.flatMap(({ data, path }) => ['----', `FILE: ${path}\n`, data]).join('\n');
+    };
+
     return `
 I have the following TypeScript code:
 
 \`\`\`typescript
-${await enrichTextData(inputCode, this.io.readFile)}
+${await enrichTextData(inputCode, enricher)}
 \`\`\`
 
 I also have some Jest unit test examples for reference:
 
 \`\`\`typescript
-${await enrichTextData(inputExamples, this.io.readFile)}
+${await enrichTextData(inputExamples, enricher)}
 \`\`\`
 
 Your task is to:

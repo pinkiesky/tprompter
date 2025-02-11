@@ -13,19 +13,18 @@ export class Actions {
   constructor() {}
 
   async evaluate(strategy: AvailableActions, content: string): Promise<void> {
-    switch (strategy) {
-      case AvailableActions.PRINT_TO_CONSOLE:
-        await this.printToConsole(content);
-        break;
-      case AvailableActions.OPEN_IN_BROWSER:
-        await this.openInBrowser(content);
-        break;
-      case AvailableActions.COPY_TO_CLIPBOARD:
-        await this.copyToClipboard(content);
-        break;
-      default:
-        throw new Error(`Unknown action: ${strategy}`);
+    const actionsMap: Record<AvailableActions, Function> = {
+      [AvailableActions.PRINT_TO_CONSOLE]: this.printToConsole,
+      [AvailableActions.OPEN_IN_BROWSER]: this.openInBrowser,
+      [AvailableActions.COPY_TO_CLIPBOARD]: this.copyToClipboard,
+    };
+
+    const action = actionsMap[strategy];
+    if (!action) {
+      throw new Error(`Unknown action: ${strategy}`);
     }
+
+    await action.call(this, content);
   }
 
   async printToConsole(content: string): Promise<void> {

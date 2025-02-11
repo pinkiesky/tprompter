@@ -31,6 +31,7 @@ export class MainController {
       throw new Error('Record not found');
     }
 
+    console.log('evaluating', record);
     await this.actions.evaluate(after, record.content);
   }
 }

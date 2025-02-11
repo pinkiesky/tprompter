@@ -1,15 +1,16 @@
 import { Service } from 'typedi';
-import { Clipboardy } from './Clipboard.js';
+import { runDisposableServer } from '../utils/disposableServer/index.js';
+import open from 'open';
 
 export enum AvailableActions {
-  PRINT_TO_CONSOLE = 'printToConsole',
-  OPEN_IN_BROWSER = 'openInBrowser',
-  COPY_TO_CLIPBOARD = 'copyToClipboard',
+  PRINT_TO_CONSOLE = 'print',
+  OPEN_IN_BROWSER = 'browser',
+  COPY_TO_CLIPBOARD = 'copy',
 }
 
 @Service()
 export class Actions {
-  constructor(private cb: Clipboardy) {}
+  constructor() {}
 
   async evaluate(strategy: AvailableActions, content: string): Promise<void> {
     switch (strategy) {
@@ -32,12 +33,14 @@ export class Actions {
   }
 
   async openInBrowser(content: string): Promise<void> {
-    // Open the URL in the default browser
-    // This is a placeholder for the real implementation
-    console.log(`Opening some in the browser`);
+    const server = await runDisposableServer(content);
+
+    const gptUrl = `https://chatgpt.com/#url=${server.url}`;
+    open(gptUrl).catch(console.error);
   }
 
   async copyToClipboard(content: string): Promise<void> {
-    await this.cb.write(content);
+    const clipboardy = await import('clipboardy');
+    await clipboardy.default.write(content);
   }
 }

@@ -1,12 +1,12 @@
-import { Service } from 'typedi';
+import { Service, Container } from 'typedi';
 import { enrichTextData } from '../utils/enrichTextData.js';
 import { StdinDataReader } from '../utils/StdinDataReader.js';
 import { IO } from '../utils/IO.js';
 import { IPrompt } from './index.js';
 
 @Service()
-export class CodeReviewPrompt implements IPrompt {
-  name = 'code_review_prompt';
+export class StarterPrompt implements IPrompt {
+  name = 'starter';
 
   constructor(
     private stdinReader: StdinDataReader,
@@ -19,7 +19,7 @@ export class CodeReviewPrompt implements IPrompt {
   }
 
   async generate(): Promise<string> {
-    const inputCode = await this.stdinReader.readData('Enter the code:');
+    const inputCode = await this.stdinReader.readData('Enter the source code files:');
 
     const enricher = async (path: string) => {
       const d = await this.io.readAllFilesRecursive(path, (p) => this.isAcceptableExtension(p));
@@ -33,8 +33,7 @@ You are a senior developer at a software company. You are provided with the foll
 ${await enrichTextData(inputCode, enricher)}
 \`\`\`
 
-Your task is to make a code review. Please, consider the code maintanibility, security and logical concerns, and any improvements you can suggest.
-Your task is very important to the team, and your feedback will help to improve the overall code quality and maintainability of the project.
-  `.trim();
+I will write you questions or ask for favors based on the code provided.
+`.trim();
   }
 }

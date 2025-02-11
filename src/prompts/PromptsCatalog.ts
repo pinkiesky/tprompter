@@ -2,14 +2,29 @@ import { Container, Service } from 'typedi';
 import { WriteUnitTestsPrompt } from './WriteUnitTestsPrompt.js';
 import { IPrompt } from './index.js';
 import { CodeReviewPrompt } from './CodeReviewPrompt.js';
+import { WriteBoilerplatePrompt } from './WriteBoilerplanePrompt.js';
+import { StarterPrompt } from './StarterPrompt.js';
 
 @Service()
 export class PromptsCatalog {
   private prompts: IPrompt[] = [];
 
   constructor() {
-    this.prompts.push(Container.get(WriteUnitTestsPrompt));
-    this.prompts.push(Container.get(CodeReviewPrompt));
+    this.addPrompt([
+      Container.get(WriteUnitTestsPrompt),
+      Container.get(CodeReviewPrompt),
+      Container.get(WriteBoilerplatePrompt),
+      Container.get(StarterPrompt),
+      Container.get(CodeReviewPrompt),
+    ]);
+  }
+
+  addPrompt(prompt: IPrompt | IPrompt[]): void {
+    if (Array.isArray(prompt)) {
+      this.prompts.push(...prompt);
+    } else {
+      this.prompts.push(prompt);
+    }
   }
 
   async getPrompt(name: string): Promise<IPrompt> {

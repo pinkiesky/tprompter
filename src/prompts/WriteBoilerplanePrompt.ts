@@ -5,8 +5,8 @@ import { IO } from '../utils/IO.js';
 import { IPrompt } from './index.js';
 
 @Service()
-export class WriteUnitTestsPrompt implements IPrompt {
-  name = 'write_unit_tests';
+export class WriteBoilerplatePrompt implements IPrompt {
+  name = 'write_boilerplate';
 
   constructor(
     private stdinReader: StdinDataReader,
@@ -28,8 +28,8 @@ export class WriteUnitTestsPrompt implements IPrompt {
     };
 
     return `
-You are a senior developer at a software company. You have been tasked with writing unit tests a code.
-You can use the following Jest unit test examples for reference:
+You are a senior developer at a software company. You have been tasked with writing a boilerplate.
+You can use the following Jest e2e test examples for reference:
 
 \`\`\`typescript
 ${await enrichTextData(inputExamples, enricher)}
@@ -42,12 +42,11 @@ ${await enrichTextData(inputCode, enricher)}
 \`\`\`
 
 Your task is to:
-	1.	Write a new unit test file that thoroughly tests the provided code.
+	1.	Write a boilerplate for e2e test file that thoroughly tests the provided code.
 	2.	Use the examples as a guide to ensure consistent structure, style, and patterns.
-	3.	Use proper mocking and assertions where necessary to simulate real-world behavior and dependencies.
 
 The output should include:
-	•	A complete unit test file in Jest that adheres to best practices.
+	•	A test file in Jest that adheres to best practices.
 	•	Avoid long comments and explanation. Instead, focus on writing clean, concise, and maintainable code.
 `.trim();
   }

@@ -1,8 +1,7 @@
-import { Service, Container } from 'typedi';
-import { enrichTextData } from '../utils/enrichTextData.js';
+import { Service } from 'typedi';
 import { StdinDataReader } from '../utils/StdinDataReader.js';
-import { IO } from '../utils/IO.js';
 import { IPrompt } from './index.js';
+import { TextDataEnricher } from '../textDataEnricher/TextDataEnricher.js';
 
 @Service()
 export class WriteUnitTestsPrompt implements IPrompt {
@@ -10,35 +9,28 @@ export class WriteUnitTestsPrompt implements IPrompt {
 
   constructor(
     private stdinReader: StdinDataReader,
-    private io: IO,
+    private enricher: TextDataEnricher,
   ) {}
 
-  isAcceptableExtension(file: string): boolean {
-    const exts = ['.ts', '.svelte', '.js', '.jsx', '.html', '.css'];
-    return exts.some((ext) => file.endsWith(ext));
-  }
-
   async generate(): Promise<string> {
-    const inputCode = await this.stdinReader.readData('Enter the TypeScript + NestJS code:');
-    const inputExamples = await this.stdinReader.readData('Enter the Jest unit test examples:');
+    const inputCodeRaw = await this.stdinReader.readData('Enter the TypeScript + NestJS code:');
+    const inputExamplesRaw = await this.stdinReader.readData('Enter the Jest unit test examples:');
 
-    const enricher = async (path: string) => {
-      const d = await this.io.readAllFilesRecursive(path, (p) => this.isAcceptableExtension(p));
-      return d.flatMap(({ data, path }) => ['----', `FILE: ${path}\n`, data]).join('\n');
-    };
+    const inputCode = await this.enricher.enrichRawInput(inputCodeRaw.trim());
+    const inputExamples = await this.enricher.enrichRawInput(inputExamplesRaw.trim());
 
     return `
 You are a senior developer at a software company. You have been tasked with writing unit tests a code.
 You can use the following Jest unit test examples for reference:
 
 \`\`\`typescript
-${await enrichTextData(inputExamples, enricher)}
+${inputExamples}
 \`\`\`
 
 You are provided with the following TypeScript + NestJS code that needs to be tested:
 
 \`\`\`typescript
-${await enrichTextData(inputCode, enricher)}
+${inputCode}
 \`\`\`
 
 Your task is to:

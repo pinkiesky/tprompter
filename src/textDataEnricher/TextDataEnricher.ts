@@ -6,6 +6,7 @@ import { getFilePathsFromLine } from '../utils/enrichTextData.js';
 import { Service } from 'typedi';
 import { parse } from 'yaml';
 import { minimatch } from 'minimatch';
+import { longestCommonPrefix } from '../utils/longestCommonPrefix.js';
 
 export interface DirectoryConfig {
   exclude?: string[];
@@ -18,6 +19,11 @@ const DEFAULT_CONFIG: Readonly<DirectoryConfig> = {
   allowedExtensions: ['.ts', '.svelte', '.js', '.jsx', '.html', '.css'],
 };
 
+export interface Piece {
+  path?: string;
+  content: string;
+}
+
 @Service()
 export class TextDataEnricher {
   static CONFIGURATION_FILENAME = '.promptconfig.yaml';
@@ -29,7 +35,7 @@ export class TextDataEnricher {
 
   async enrichRawInput(data: string, config = DEFAULT_CONFIG): Promise<string> {
     const lines = data.split('\n');
-    const result = [];
+    const result: Piece[] = [];
 
     for (const line of lines) {
       const paths = getFilePathsFromLine(line);
@@ -37,19 +43,19 @@ export class TextDataEnricher {
       if (paths.length) {
         for (const path of paths) {
           const content = await this.handlePath(path, config);
-          if (content) {
-            result.push(content);
-          }
+          result.push(...content);
         }
       } else {
-        result.push(line);
+        result.push({
+          content: line,
+        });
       }
     }
 
-    return result.join('\n');
+    return this.convertPiecesToContent(result);
   }
 
-  private async handlePath(path: string, config: DirectoryConfig): Promise<string | null> {
+  private async handlePath(path: string, config: DirectoryConfig): Promise<Piece[]> {
     const stat = await this.io.stat(path);
 
     if (stat.isFile()) {
@@ -62,17 +68,17 @@ export class TextDataEnricher {
 
     this.logger.info(`Path is not a file or directory: ${path}`);
 
-    return null;
+    return [];
   }
 
-  private async handleFile(path: string, config: DirectoryConfig): Promise<string> {
+  private async handleFile(path: string, config: DirectoryConfig): Promise<Piece[]> {
     this.logger.debug(`Reading file: ${path}`);
 
     const content = await this.io.readFile(path);
-    return [`---- FILE: ${path}\n`, content].join('\n');
+    return [{ path, content }];
   }
 
-  private async handleDirectory(path: string, config: DirectoryConfig): Promise<string> {
+  private async handleDirectory(path: string, config: DirectoryConfig): Promise<Piece[]> {
     this.logger.debug(`Reading directory: ${path}`);
 
     const configPath = join(path, TextDataEnricher.CONFIGURATION_FILENAME);
@@ -90,7 +96,7 @@ export class TextDataEnricher {
       };
     }
 
-    const result = [];
+    const pieces: Piece[] = [];
     let items = await this.io.readdir(path);
     this.logger.debug(`Found ${items.length} items in directory: ${path}`);
 
@@ -119,11 +125,36 @@ export class TextDataEnricher {
 
     for (const item of items) {
       const content = await this.handlePath(join(path, item.name), actualConfig);
-      if (content) {
-        result.push(content);
+      pieces.push(...content);
+    }
+
+    return pieces;
+  }
+
+  private convertPiecesToContent(pieces: Piece[]): string {
+    const pathPrefix = longestCommonPrefix(
+      pieces.map((piece) => piece.path).filter(Boolean) as string[],
+    );
+
+    let result = '';
+
+    for (const piece of pieces) {
+      if (piece.path) {
+        const relativePath = piece.path.slice(pathPrefix.length);
+        result += this.formatPieceName(relativePath) + '\n';
+      }
+
+      result += piece.content;
+
+      if (!result.endsWith('\n')) {
+        result += '\n';
       }
     }
 
-    return result.join('\n');
+    return result;
+  }
+
+  formatPieceName(name: string): string {
+    return `--- File: ${name} ---`;
   }
 }

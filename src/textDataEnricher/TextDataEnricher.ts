@@ -16,7 +16,6 @@ export interface DirectoryConfig {
 
 const DEFAULT_CONFIG: Readonly<DirectoryConfig> = {
   exclude: ['node_modules', '.git', 'package-lock.json', 'yarn.lock'],
-  allowedExtensions: ['.ts', '.svelte', '.js', '.jsx', '.html', '.css'],
 };
 
 export interface Piece {
@@ -88,7 +87,7 @@ export class TextDataEnricher {
       const configRaw = await this.io.readFile(configPath);
       const configParsed = parse(configRaw) as DirectoryConfig;
 
-      this.logger.debug(`Apply configuration file: ${configPath}`);
+      this.logger.debug(`Apply configuration file: ${configPath}, ${JSON.stringify(configParsed)}`);
 
       actualConfig = {
         ...actualConfig,
@@ -109,19 +108,31 @@ export class TextDataEnricher {
           actualConfig.allowedExtensions?.length &&
           !actualConfig.allowedExtensions.some((ext) => item.name.endsWith(ext))
         ) {
+          this.logger.debug(`Skipping file because of extension: ${item.name}`);
           return false;
         }
 
         if (actualConfig.include?.length) {
-          return actualConfig.include.some((pattern) => minimatch(item.name, pattern));
+          const res = actualConfig.include.some((pattern) => minimatch(item.name, pattern));
+          if (!res) {
+            this.logger.debug(`Skipping file because of include pattern: ${item.name}`);
+          }
+
+          return res;
         }
 
         if (actualConfig.exclude?.length) {
-          return !actualConfig.exclude.some((pattern) => minimatch(item.name, pattern));
+          const res = !actualConfig.exclude.some((pattern) => minimatch(item.name, pattern));
+          if (!res) {
+            this.logger.debug(`Skipping file because of exclude pattern: ${item.name}`);
+          }
+
+          return res;
         }
 
         return true;
-      });
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     for (const item of items) {
       const content = await this.handlePath(join(path, item.name), actualConfig);

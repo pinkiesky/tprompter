@@ -1,12 +1,12 @@
 import { Container, Service } from 'typedi';
-import { WriteUnitTestsPrompt } from './WriteUnitTestsPrompt.js';
-import { IPrompt } from './index.js';
-import { CodeReviewPrompt } from './CodeReviewPrompt.js';
-import { WriteBoilerplatePrompt } from './WriteBoilerplatePrompt.js';
-import { StarterPrompt } from './StarterPrompt.js';
+import { WriteUnitTestsPrompt } from '../WriteUnitTestsPrompt.js';
+import { IPrompt } from '../index.js';
+import { CodeReviewPrompt } from '../CodeReviewPrompt.js';
+import { WriteBoilerplatePrompt } from '../WriteBoilerplatePrompt.js';
+import { StarterPrompt } from '../StarterPrompt.js';
 
 @Service()
-export class PromptsCatalog {
+export class BuiltinPromptsCatalog {
   private prompts: IPrompt[] = [];
 
   constructor() {
@@ -26,13 +26,8 @@ export class PromptsCatalog {
     }
   }
 
-  async getPrompt(name: string): Promise<IPrompt> {
-    const prompt = this.prompts.find((p) => p.name === name);
-    if (!prompt) {
-      throw new Error(`Prompt with name ${name} not found`);
-    }
-
-    return prompt;
+  async getPrompt(name: string): Promise<IPrompt | null> {
+    return this.prompts.find((p) => p.name === name) ?? null;
   }
 
   async listPrompts(): Promise<string[]> {

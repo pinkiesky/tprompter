@@ -6,8 +6,9 @@ import { Logger } from '../logger/index.js';
 
 export enum AvailableActions {
   PRINT_TO_CONSOLE = 'print',
-  OPEN_IN_BROWSER = 'browser',
+  OPEN_IN_CHATGPT = 'chatgpt',
   COPY_TO_CLIPBOARD = 'copy',
+  RUN_EDITOR = 'editor',
 }
 
 @Service()
@@ -16,8 +17,9 @@ export class Actions {
 
   private actionsMap: Record<AvailableActions, (s: string) => void> = {
     [AvailableActions.PRINT_TO_CONSOLE]: this.printToConsole,
-    [AvailableActions.OPEN_IN_BROWSER]: this.openInBrowser,
+    [AvailableActions.OPEN_IN_CHATGPT]: this.openInChatGPT,
     [AvailableActions.COPY_TO_CLIPBOARD]: this.copyToClipboard,
+    [AvailableActions.RUN_EDITOR]: this.runEditor,
   };
 
   async evaluate(strategy: AvailableActions, content: string): Promise<void> {
@@ -34,7 +36,7 @@ export class Actions {
     console.log(content);
   }
 
-  async openInBrowser(content: string): Promise<void> {
+  async openInChatGPT(content: string): Promise<void> {
     const server = await runDisposableServer(content);
 
     const gptUrl = `https://chatgpt.com/#url=${server.url}`;
@@ -44,5 +46,9 @@ export class Actions {
   async copyToClipboard(content: string): Promise<void> {
     const clipboardy = await import('clipboardy');
     await clipboardy.default.write(content);
+  }
+
+  async runEditor(content: string): Promise<void> {
+    throw new Error('Not implemented');
   }
 }

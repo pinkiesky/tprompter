@@ -1,18 +1,22 @@
 import { Service } from 'typedi';
-import { PromptsCatalog } from './prompts/PromptsCatalog.js';
 import { Actions, AvailableActions } from './actions/Actions.js';
 import { ArchiveService } from './archive/Archive.js';
 import { countTokens } from 'gpt-tokenizer';
 import { InjectLogger } from './logger/logger.decorator.js';
 import { Logger } from './logger/index.js';
+import { PromptsService } from './prompts/PromptsService.js';
+import { IO } from './utils/IO.js';
+import { StdinDataReader } from './utils/StdinDataReader.js';
 
 @Service()
 export class MainController {
   constructor(
-    private catalog: PromptsCatalog,
     private actions: Actions,
     private archive: ArchiveService,
     @InjectLogger(MainController) private logger: Logger,
+    private promptsService: PromptsService,
+    private io: IO,
+    private stdinReader: StdinDataReader,
   ) {}
 
   reportTokensCount(content: string): void {
@@ -21,18 +25,22 @@ export class MainController {
     this.logger.info(`Tokens count: ${tokensCount}`);
   }
 
-  async listPrompts(): Promise<string[]> {
-    return this.catalog.listPrompts();
+  listPrompts(): Promise<string[]> {
+    return this.promptsService.listPrompts();
   }
 
-  async generateAndEvaluate(name: string, after: AvailableActions): Promise<void> {
-    const prompt = await this.catalog.getPrompt(name);
+  async generateAndEvaluate(nameOrFile: string, after: AvailableActions): Promise<void> {
+    const prompt = await this.promptsService.getPromptByNameOrPath(nameOrFile);
+    if (!prompt) {
+      throw new Error(`Prompt not found: ${nameOrFile}`);
+    }
+
     const content = await prompt.generate();
 
     this.reportTokensCount(content);
 
     await Promise.all([
-      this.archive.save({ description: name, content }),
+      this.archive.save({ description: nameOrFile, content }),
       this.actions.evaluate(after, content),
     ]);
   }
@@ -46,5 +54,20 @@ export class MainController {
     this.reportTokensCount(record.content);
 
     await this.actions.evaluate(after, record.content);
+  }
+
+  async uninstallPrompt(name: string) {
+    return this.promptsService.uninstallPrompt(name);
+  }
+
+  async installPrompt(name: string, filepath?: string) {
+    let content;
+    if (filepath) {
+      content = await this.io.readFile(filepath);
+    } else {
+      content = await this.stdinReader.readData('Enter prompt content');
+    }
+
+    return this.promptsService.installPrompt(name, content);
   }
 }

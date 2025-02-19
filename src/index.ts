@@ -44,20 +44,81 @@ async function main(): Promise<void> {
       },
     )
     .command(
-      'generate <name>',
+      'generate <nameOrFile>',
       'Generate a prompt',
       (yargs) => {
         return yargs
-          .positional('name', {
-            describe: 'Name of the prompt',
+          .positional('nameOrFile', {
+            describe: 'Name of the prompt or path to the file with the prompt',
             type: 'string',
             demandOption: true,
           })
           .option('after', afterDescription);
       },
-      ({ name, after }) => {
-        ctrl.generateAndEvaluate(name, after).catch((err) => rootLogger.root.error(err));
+      ({ nameOrFile, after }) => {
+        ctrl.generateAndEvaluate(nameOrFile, after).catch((err) => rootLogger.root.error(err));
       },
+    )
+    .command(
+      'prompt <subcommand>',
+      'Manage prompts',
+      (yargs) => {
+        return yargs
+          .command(
+            'list',
+            'List available prompts',
+            () => {},
+            () => {
+              ctrl
+                .listPrompts()
+                .then((prompts) => {
+                  prompts.forEach((p) => console.log(p));
+                })
+                .catch((err) => rootLogger.root.error(err));
+            },
+          )
+          .command(
+            'install <name> [filepath]',
+            'Install a prompt from a file',
+            (yargs) => {
+              return yargs
+                .positional('name', {
+                  describe: 'Name of the prompt',
+                  type: 'string',
+                  demandOption: true,
+                })
+                .positional('filepath', {
+                  describe: 'Path to the file with the prompt',
+                  type: 'string',
+                  demandOption: false,
+                });
+            },
+            ({ name, filepath }) => {
+              ctrl
+                .installPrompt(name, filepath)
+                .then(() => rootLogger.root.info('Prompt installed'))
+                .catch((err) => rootLogger.root.error(err));
+            },
+          )
+          .command(
+            'uninstall <name>',
+            'Uninstall a prompt',
+            (yargs) => {
+              return yargs.positional('name', {
+                describe: 'Name of the prompt',
+                type: 'string',
+                demandOption: true,
+              });
+            },
+            ({ name }) => {
+              ctrl
+                .uninstallPrompt(name)
+                .then(() => rootLogger.root.info('Prompt uninstalled'))
+                .catch((err) => rootLogger.root.error(err));
+            },
+          );
+      },
+      () => {},
     )
     .command(
       'archive <index>',

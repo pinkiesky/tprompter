@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { readFile, mkdir, writeFile, readdir, stat } from 'fs/promises';
+import { readFile, mkdir, writeFile, readdir, stat, unlink } from 'fs/promises';
 import { Stats, Dirent } from 'fs';
 
 @Service()
@@ -71,5 +71,9 @@ export class IO {
     } catch {
       return false;
     }
+  }
+
+  async unlink(path: string): Promise<void> {
+    return unlink(path);
   }
 }

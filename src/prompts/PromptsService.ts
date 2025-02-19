@@ -52,4 +52,8 @@ export class PromptsService {
   isFilepath(nameOrFile: string): boolean {
     return nameOrFile.startsWith('/') || nameOrFile.startsWith('./');
   }
+
+  async getPromptsFolder(): Promise<string> {
+    return this.externalPromptsCatalog.getPromptsFolder();
+  }
 }

@@ -7,6 +7,7 @@ import { Logger } from './logger/index.js';
 import { PromptsService } from './prompts/PromptsService.js';
 import { IO } from './utils/IO.js';
 import { StdinDataReader } from './utils/StdinDataReader.js';
+import { openFinder } from './utils/openFinder.js';
 
 @Service()
 export class MainController {
@@ -69,5 +70,10 @@ export class MainController {
     }
 
     return this.promptsService.installPrompt(name, content);
+  }
+
+  async openPromptsFolder() {
+    const folder = await this.promptsService.getPromptsFolder();
+    await openFinder(folder);
   }
 }

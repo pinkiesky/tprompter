@@ -116,6 +116,14 @@ async function main(): Promise<void> {
                 .then(() => rootLogger.root.info('Prompt uninstalled'))
                 .catch((err) => rootLogger.root.error(err));
             },
+          )
+          .command(
+            'open_folder',
+            'Open the folder with external prompts',
+            () => {},
+            () => {
+              ctrl.openPromptsFolder().catch((err) => rootLogger.root.error(err));
+            },
           );
       },
       () => {},

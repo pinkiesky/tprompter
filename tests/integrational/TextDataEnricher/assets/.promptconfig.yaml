@@ -1,6 +1,4 @@
 exclude:
   - ignore_me
   - generate.sh
-allowedExtensions:
-  - ''
-  - .sh
+  

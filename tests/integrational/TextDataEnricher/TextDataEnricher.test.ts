@@ -47,7 +47,7 @@ describe(TextDataEnricher.name, () => {
 
   test('enrichRawInput (directory with overrided config)', async () => {
     const data = replaceAssets('@/0d');
-    const result = await enricher.enrichRawInput(data, { allowedExtensions: [''] });
+    const result = await enricher.enrichRawInput(data);
 
     const expected = new Array(10)
       .fill(0)

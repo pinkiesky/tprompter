@@ -11,7 +11,6 @@ import { longestCommonPrefix } from '../utils/longestCommonPrefix.js';
 export interface DirectoryConfig {
   exclude?: string[];
   include?: string[];
-  allowedExtensions?: string[];
 }
 
 const DEFAULT_CONFIG: Readonly<DirectoryConfig> = {
@@ -103,15 +102,6 @@ export class TextDataEnricher {
       .filter((item) => item.isFile() || item.isDirectory())
       .filter((item) => item.name !== TextDataEnricher.CONFIGURATION_FILENAME)
       .filter((item) => {
-        if (
-          item.isFile() &&
-          actualConfig.allowedExtensions?.length &&
-          !actualConfig.allowedExtensions.some((ext) => item.name.endsWith(ext))
-        ) {
-          this.logger.debug(`Skipping file because of extension: ${item.name}`);
-          return false;
-        }
-
         if (actualConfig.include?.length) {
           const res = actualConfig.include.some((pattern) => minimatch(item.name, pattern));
           if (!res) {

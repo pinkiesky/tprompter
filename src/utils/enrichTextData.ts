@@ -1,7 +1,7 @@
 export function getFilePathsFromLine(data: string): string[] {
   data = data.trim();
 
-  if (!data || data.startsWith('//')) {
+  if (!data || data.startsWith('//') || data.startsWith('/*')) {
     return [];
   }
 

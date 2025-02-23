@@ -22,6 +22,7 @@ async function main(): Promise<void> {
   const rootLogger = Container.get(LoggerService);
 
   const availabePrompts: string[] = await ctrl.listPrompts();
+  const availabeAssets: string[] = await ctrl.listAssets();
 
   const params = await yargs(hideBin(process.argv))
     .scriptName('tprompter')
@@ -149,13 +150,38 @@ async function main(): Promise<void> {
       },
     )
     .command(
-      'fish',
-      'Generate fish shell completion',
-      () => {},
-      async () => {
-        const asset = await ctrl.getAsset('fish');
-        console.log(asset);
+      'assets <subcommand>',
+      'List and get assets',
+      (yargs) => {
+        return yargs
+          .command(
+            'list',
+            'List available assets',
+            () => {},
+            () => {
+              availabeAssets.forEach((a) => console.log(a));
+            },
+          )
+          .command(
+            'get <name>',
+            'Get an asset',
+            (yargs) => {
+              return yargs.positional('name', {
+                describe: 'Name of the asset',
+                type: 'string',
+                demandOption: true,
+                choices: availabeAssets,
+              });
+            },
+            ({ name }) => {
+              ctrl
+                .getAsset(name)
+                .then((content) => console.log(content))
+                .catch((err) => rootLogger.root.error(err));
+            },
+          );
       },
+      async () => {},
     )
     .completion()
     .help()

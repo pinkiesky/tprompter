@@ -5,7 +5,10 @@ import path from 'node:path';
 @Service()
 export class AssetsService {
   private assetsFolder: string | undefined = undefined;
-  private availableAssets = [{ name: 'fish', path: 'tprompter.fish' }];
+  private availableAssets = [
+    { name: 'fish', path: 'tprompter.fish' },
+    { name: 'chatgptloader', path: 'chatGPTRemotePromptLoader.js' },
+  ];
 
   constructor(private io: IO) {}
 

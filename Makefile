@@ -5,6 +5,7 @@ clean:
 
 build_copy: 
 	cp -r ./src/utils/readData.process.js ./dist/utils/
+	cp -r ./src/assets/data ./dist/assets
 
 build_source:
 	npx tsc

@@ -7,11 +7,8 @@ tprompter is a powerful CLI tool designed to streamline the generation of custom
 ## Build and install (locally)
 
 ```bash
-# remove previous version
-npm uninstall -g .
-
-# build and install
-npm run build && npm install -g .
+# remove previous version && build and install
+npm uninstall -g . && npm run build && npm install -g .
 ```
 
 ## Usage

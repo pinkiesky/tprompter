@@ -21,6 +21,8 @@ async function main(): Promise<void> {
   const ctrl = Container.get(MainController);
   const rootLogger = Container.get(LoggerService);
 
+  const availabePrompts: string[] = await ctrl.listPrompts();
+
   const params = await yargs(hideBin(process.argv))
     .scriptName('tprompter')
     .boolean('verbose')
@@ -35,12 +37,7 @@ async function main(): Promise<void> {
       'List available prompts',
       () => {},
       () => {
-        ctrl
-          .listPrompts()
-          .then((prompts) => {
-            prompts.forEach((p) => console.log(p));
-          })
-          .catch((err) => rootLogger.root.error(err));
+        availabePrompts.forEach((p) => console.log(p));
       },
     )
     .command(
@@ -50,8 +47,9 @@ async function main(): Promise<void> {
         return yargs
           .positional('nameOrFile', {
             describe: 'Name of the prompt or path to the file with the prompt',
-            type: 'string',
             demandOption: true,
+            type: 'string',
+            choices: availabePrompts,
           })
           .option('after', afterDescription);
       },
@@ -69,12 +67,7 @@ async function main(): Promise<void> {
             'List available prompts',
             () => {},
             () => {
-              ctrl
-                .listPrompts()
-                .then((prompts) => {
-                  prompts.forEach((p) => console.log(p));
-                })
-                .catch((err) => rootLogger.root.error(err));
+              availabePrompts.forEach((p) => console.log(p));
             },
           )
           .command(
@@ -108,6 +101,7 @@ async function main(): Promise<void> {
                 describe: 'Name of the prompt',
                 type: 'string',
                 demandOption: true,
+                choices: availabePrompts,
               });
             },
             ({ name }) => {
@@ -154,8 +148,19 @@ async function main(): Promise<void> {
         rootLogger.root.info(`Version: ${BUILD_INFO.version} (${BUILD_INFO.gitHash})`);
       },
     )
+    .command(
+      'fish',
+      'Generate fish shell completion',
+      () => {},
+      async () => {
+        const asset = await ctrl.getAsset('fish');
+        console.log(asset);
+      },
+    )
+    .completion()
     .help()
     .demandCommand(1, 'You need at least one command before moving on')
+    .version(false)
     .strict()
     .parse();
 

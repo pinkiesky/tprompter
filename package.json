@@ -10,7 +10,7 @@
   "bin": "./dist/index.js",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "start": "tsc && node ./dist/index.js",
+    "start": "make build --silent && node ./dist/index.js",
     "format": "prettier --write .",
     "build": "make build"
   },

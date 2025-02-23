@@ -8,6 +8,7 @@ import { PromptsService } from './prompts/PromptsService.js';
 import { IO } from './utils/IO.js';
 import { StdinDataReader } from './utils/StdinDataReader.js';
 import { openFinder } from './utils/openFinder.js';
+import { AssetsService } from './assets/AssetsService.js';
 
 @Service()
 export class MainController {
@@ -18,6 +19,7 @@ export class MainController {
     private promptsService: PromptsService,
     private io: IO,
     private stdinReader: StdinDataReader,
+    private assetsService: AssetsService,
   ) {}
 
   reportTokensCount(content: string): void {
@@ -75,5 +77,18 @@ export class MainController {
   async openPromptsFolder() {
     const folder = await this.promptsService.getPromptsFolder();
     await openFinder(folder);
+  }
+
+  async listAssets(): Promise<string[]> {
+    return this.assetsService.listAvailableAssets();
+  }
+
+  async getAsset(name: string): Promise<string> {
+    const asset = await this.assetsService.getAsset(name);
+    if (!asset) {
+      throw new Error(`Asset not found: ${name}`);
+    }
+
+    return asset;
   }
 }

@@ -1,12 +1,16 @@
 {
   "name": "tprompter",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
-  "exports": "./index.js",
+  "exports": null,
   "type": "module",
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pinkiesky/tprompter"
+  },
   "bin": "./dist/index.js",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
@@ -14,7 +18,14 @@
     "format": "prettier --write .",
     "build": "make build"
   },
-  "keywords": [],
+  "keywords": [
+    "typescript",
+    "cli",
+    "prompter",
+    "terminal",
+    "gpt",
+    "ai"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

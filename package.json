@@ -30,7 +30,6 @@
   "dependencies": {
     "clipboardy": "^4.0.0",
     "env-paths": "^3.0.0",
-    "get-port": "^7.1.0",
     "gpt-tokenizer": "^2.8.1",
     "minimatch": "^10.0.1",
     "open": "^10.1.0",

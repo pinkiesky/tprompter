@@ -13,7 +13,7 @@ export class StarterPrompt implements IPrompt {
   ) {}
 
   async generate(): Promise<string> {
-    const inputCodeRaw = await this.stdinReader.readData('Enter the source code files:');
+    const inputCodeRaw = await this.stdinReader.readData('Enter the source code files');
     const inputCode = await this.enricher.enrichRawInput(inputCodeRaw.trim());
 
     return `

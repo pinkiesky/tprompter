@@ -4,7 +4,7 @@ import { ArchiveService } from './archive/Archive.js';
 import { countTokens } from 'gpt-tokenizer';
 import { InjectLogger } from './logger/logger.decorator.js';
 import { Logger } from './logger/index.js';
-import { PromptsService } from './prompts/PromptsService.js';
+import { TemplateService } from './templates/PromptsService.js';
 import { IO } from './utils/IO.js';
 import { StdinDataReader } from './utils/StdinDataReader.js';
 import { openFinder } from './utils/openFinder.js';
@@ -16,7 +16,7 @@ export class MainController {
     private actions: Actions,
     private archive: ArchiveService,
     @InjectLogger(MainController) private logger: Logger,
-    private promptsService: PromptsService,
+    private promptsService: TemplateService,
     private io: IO,
     private stdinReader: StdinDataReader,
     private assetsService: AssetsService,
@@ -28,8 +28,8 @@ export class MainController {
     this.logger.info(`Tokens count: ${tokensCount}`);
   }
 
-  listPrompts(): Promise<string[]> {
-    return this.promptsService.listPrompts();
+  listTemplates(): Promise<string[]> {
+    return this.promptsService.listTemplates();
   }
 
   async generateAndEvaluate(nameOrFile: string, after: AvailableActions): Promise<void> {
@@ -63,12 +63,12 @@ export class MainController {
     return this.promptsService.uninstallPrompt(name);
   }
 
-  async installPrompt(name: string, filepath?: string) {
+  async installTemplate(name: string, filepath?: string) {
     let content;
     if (filepath) {
       content = await this.io.readFile(filepath);
     } else {
-      content = await this.stdinReader.readData('Enter prompt content');
+      content = await this.stdinReader.readData('Enter template content');
     }
 
     return this.promptsService.installPrompt(name, content);

@@ -1,16 +1,16 @@
 import { Service } from 'typedi';
-import { BuiltinPromptsCatalog } from './catalog/BuiltinPromptsCatalog.js';
-import { ExternalPromptsCatalog } from './catalog/ExternalPromptsCatalog.js';
+import { BuiltinTemplatesCatalog } from './catalog/BuiltinTemplatesCatalog.js';
+import { ExternalTemplatesCatalog } from './catalog/ExternalTemplatesCatalog.js';
 import { IPrompt } from './index.js';
 import { IO } from '../utils/IO.js';
 import { PromptsEngine } from './PromptEngine.js';
 import { DynamicPrompt } from './DynamicPrompt.js';
 
 @Service()
-export class PromptsService {
+export class TemplateService {
   constructor(
-    private buildinPromptsCatalog: BuiltinPromptsCatalog,
-    private externalPromptsCatalog: ExternalPromptsCatalog,
+    private buildinPromptsCatalog: BuiltinTemplatesCatalog,
+    private externalPromptsCatalog: ExternalTemplatesCatalog,
     private promptEngine: PromptsEngine,
     private io: IO,
   ) {}
@@ -21,12 +21,12 @@ export class PromptsService {
       return new DynamicPrompt(nameOrFile, () => this.promptEngine.proceed(templateContent));
     }
 
-    const externalContent = await this.externalPromptsCatalog.getPromptContent(nameOrFile);
+    const externalContent = await this.externalPromptsCatalog.getTemplateContent(nameOrFile);
     if (externalContent) {
       return new DynamicPrompt(nameOrFile, () => this.promptEngine.proceed(externalContent));
     }
 
-    const builtin = await this.buildinPromptsCatalog.getPrompt(nameOrFile);
+    const builtin = await this.buildinPromptsCatalog.getTemplate(nameOrFile);
     if (builtin) {
       return builtin;
     }
@@ -34,10 +34,10 @@ export class PromptsService {
     return null;
   }
 
-  async listPrompts(): Promise<string[]> {
+  async listTemplates(): Promise<string[]> {
     return [
-      ...(await this.buildinPromptsCatalog.listPrompts()),
-      ...(await this.externalPromptsCatalog.listPrompts()),
+      ...(await this.buildinPromptsCatalog.listTemplates()),
+      ...(await this.externalPromptsCatalog.listTemplates()),
     ];
   }
 
@@ -54,6 +54,6 @@ export class PromptsService {
   }
 
   async getPromptsFolder(): Promise<string> {
-    return this.externalPromptsCatalog.getPromptsFolder();
+    return this.externalPromptsCatalog.getTemplatesFolder();
   }
 }

@@ -6,11 +6,11 @@ import { WriteBoilerplatePrompt } from '../WriteBoilerplatePrompt.js';
 import { StarterPrompt } from '../StarterPrompt.js';
 
 @Service()
-export class BuiltinPromptsCatalog {
-  private prompts: IPrompt[] = [];
+export class BuiltinTemplatesCatalog {
+  private templates: IPrompt[] = [];
 
   constructor() {
-    this.addPrompt([
+    this.addTemplate([
       Container.get(WriteUnitTestsPrompt),
       Container.get(CodeReviewPrompt),
       Container.get(WriteBoilerplatePrompt),
@@ -18,19 +18,19 @@ export class BuiltinPromptsCatalog {
     ]);
   }
 
-  addPrompt(prompt: IPrompt | IPrompt[]): void {
-    if (Array.isArray(prompt)) {
-      this.prompts.push(...prompt);
+  addTemplate(template: IPrompt | IPrompt[]): void {
+    if (Array.isArray(template)) {
+      this.templates.push(...template);
     } else {
-      this.prompts.push(prompt);
+      this.templates.push(template);
     }
   }
 
-  async getPrompt(name: string): Promise<IPrompt | null> {
-    return this.prompts.find((p) => p.name === name) ?? null;
+  async getTemplate(name: string): Promise<IPrompt | null> {
+    return this.templates.find((p) => p.name === name) ?? null;
   }
 
-  async listPrompts(): Promise<string[]> {
-    return this.prompts.map((p) => p.name);
+  async listTemplates(): Promise<string[]> {
+    return this.templates.map((p) => p.name);
   }
 }

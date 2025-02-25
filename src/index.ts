@@ -21,7 +21,7 @@ async function main(): Promise<void> {
   const ctrl = Container.get(MainController);
   const rootLogger = Container.get(LoggerService);
 
-  const availabePrompts: string[] = await ctrl.listPrompts();
+  const availableTemplates: string[] = await ctrl.listTemplates();
   const availabeAssets: string[] = await ctrl.listAssets();
 
   const params = await yargs(hideBin(process.argv))
@@ -35,14 +35,14 @@ async function main(): Promise<void> {
     .usage('$0 <command> [options]')
     .command(
       'list',
-      'List available prompts',
+      'List available templates',
       () => {},
       () => {
-        availabePrompts.forEach((p) => console.log(p));
+        availableTemplates.forEach((p) => console.log(p));
       },
     )
     .command(
-      'generate <nameOrFile>',
+      'generate <templateNameOrFile>',
       'Generate a prompt',
       (yargs) => {
         return yargs
@@ -50,7 +50,7 @@ async function main(): Promise<void> {
             describe: 'Name of the prompt or path to the file with the prompt',
             demandOption: true,
             type: 'string',
-            choices: availabePrompts,
+            choices: availableTemplates,
           })
           .option('after', afterDescription);
       },
@@ -59,38 +59,38 @@ async function main(): Promise<void> {
       },
     )
     .command(
-      'prompt <subcommand>',
-      'Manage prompts',
+      'template <subcommand>',
+      'Manage templates',
       (yargs) => {
         return yargs
           .command(
             'list',
-            'List available prompts',
+            'List available templates',
             () => {},
             () => {
-              availabePrompts.forEach((p) => console.log(p));
+              availableTemplates.forEach((p) => console.log(p));
             },
           )
           .command(
             'install <name> [filepath]',
-            'Install a prompt from a file',
+            'Install a template from a file',
             (yargs) => {
               return yargs
                 .positional('name', {
-                  describe: 'Name of the prompt',
+                  describe: 'Name of the template',
                   type: 'string',
                   demandOption: true,
                 })
                 .positional('filepath', {
-                  describe: 'Path to the file with the prompt',
+                  describe: 'Path to the file with the template',
                   type: 'string',
                   demandOption: false,
                 });
             },
             ({ name, filepath }) => {
               ctrl
-                .installPrompt(name, filepath)
-                .then(() => rootLogger.root.info('Prompt installed'))
+                .installTemplate(name, filepath)
+                .then(() => rootLogger.root.info('Template installed'))
                 .catch((err) => rootLogger.root.error(err));
             },
           )
@@ -102,7 +102,7 @@ async function main(): Promise<void> {
                 describe: 'Name of the prompt',
                 type: 'string',
                 demandOption: true,
-                choices: availabePrompts,
+                choices: availableTemplates,
               });
             },
             ({ name }) => {
@@ -114,7 +114,7 @@ async function main(): Promise<void> {
           )
           .command(
             'open_folder',
-            'Open the folder with external prompts',
+            'Open the folder with external templates',
             () => {},
             () => {
               ctrl.openPromptsFolder().catch((err) => rootLogger.root.error(err));
@@ -125,11 +125,11 @@ async function main(): Promise<void> {
     )
     .command(
       'archive <index>',
-      'Archive a prompt',
+      'Archive of previously generated prompt',
       (yargs) => {
         return yargs
           .positional('index', {
-            describe: 'Index of the prompt to archive',
+            describe: 'Index of the prompt in the archive (0 is the last one)',
             type: 'number',
             demandOption: true,
           })

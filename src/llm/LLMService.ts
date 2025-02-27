@@ -20,7 +20,7 @@ export class LLMService {
       }
     }
 
-    const model = mbModel ?? config.askModel;
+    const model = mbModel ?? config.askDefaultModel;
     return this.openAI.getCompletion(prompt, model);
   }
 

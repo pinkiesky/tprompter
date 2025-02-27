@@ -10,8 +10,14 @@ import { ArgumentsCamelCase } from 'yargs';
 import { InjectLogger } from '../logger/logger.decorator.js';
 import { Logger } from '../logger/index.js';
 
+export const DEFAULT_APP_CONFIG = new AppConfigData({
+  askDefaultModel: 'gpt-4o-mini',
+  askMaxTokens: 3000,
+});
+
 @Service()
 export class AppConfig {
+  private defaultData: AppConfigData = DEFAULT_APP_CONFIG.clone();
   private persistentData: AppConfigData = AppConfigData.empty();
   private argumentsData: AppConfigData = AppConfigData.empty();
 
@@ -64,7 +70,7 @@ export class AppConfig {
   }
 
   getConfig(): Readonly<AppConfigData> {
-    return this.persistentData.merge(this.argumentsData);
+    return this.defaultData.merge(this.persistentData).merge(this.argumentsData);
   }
 
   getAvailableConfigKeys(): string[] {

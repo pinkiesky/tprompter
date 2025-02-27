@@ -1,5 +1,5 @@
 import { Container } from 'typedi';
-import { AppConfig } from './AppConfig.js';
+import { AppConfig, DEFAULT_APP_CONFIG } from './AppConfig.js';
 import { PersistentConfigRepository } from './PersistentConfigRepository.js';
 
 describe(AppConfig.name, () => {
@@ -26,7 +26,7 @@ describe(AppConfig.name, () => {
   });
 
   describe('getConfig', () => {
-    it('should return merged data', async () => {
+    it('should return merged data (with default)', async () => {
       repoMock.getRawConfig.mockResolvedValue(JSON.stringify({ openAIApiKey: '123' }));
 
       await config.loadPersistent();
@@ -36,6 +36,8 @@ describe(AppConfig.name, () => {
         openAIApiKey: '123',
         quiet: true,
         verbose: false,
+        askMaxTokens: DEFAULT_APP_CONFIG.askMaxTokens,
+        askDefaultModel: DEFAULT_APP_CONFIG.askDefaultModel,
       });
     });
   });

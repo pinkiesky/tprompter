@@ -7,7 +7,7 @@ export interface AppConfigDataValues {
   quiet?: boolean;
   verbose?: boolean;
   askMaxTokens?: number;
-  askModel?: string;
+  askDefaultModel?: string;
 }
 export const AppConfigDataValuesTransformers: Record<
   keyof AppConfigDataValues,
@@ -17,7 +17,7 @@ export const AppConfigDataValuesTransformers: Record<
   quiet: booleanParser,
   verbose: booleanParser,
   askMaxTokens: numberParser,
-  askModel: stringParser,
+  askDefaultModel: stringParser,
 };
 
 export const AppConfigDataKeys = Object.keys(AppConfigDataValuesTransformers);
@@ -27,7 +27,7 @@ export class AppConfigData implements AppConfigDataValues {
   public quiet?: boolean;
   public verbose?: boolean;
   public askMaxTokens?: number;
-  public askModel?: string;
+  public askDefaultModel?: string;
 
   static getAvailableKeys(): string[] {
     return AppConfigDataKeys;
@@ -39,6 +39,10 @@ export class AppConfigData implements AppConfigDataValues {
 
   merge(data: Partial<AppConfigData>): AppConfigData {
     return new AppConfigData({ ...this, ...data });
+  }
+
+  clone(): AppConfigData {
+    return new AppConfigData(this);
   }
 
   serialize(): string {

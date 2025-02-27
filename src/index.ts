@@ -13,6 +13,7 @@ import { BUILD_INFO } from './buildInfo.js';
 import { AppConfig } from './config/AppConfig.js';
 import { AppConfigDataKeys } from './config/AppConfigData.js';
 import { LLMService } from './llm/LLMService.js';
+import { inspect } from 'node:util';
 
 const afterDescription = {
   describe: 'What to do after generating the prompt',
@@ -58,7 +59,7 @@ async function main(): Promise<void> {
       'Generate a prompt',
       (yargs) => {
         return yargs
-          .positional('nameOrFile', {
+          .positional('templateNameOrFile', {
             describe: 'Name of the prompt or path to the file with the prompt',
             demandOption: true,
             type: 'string',
@@ -66,8 +67,12 @@ async function main(): Promise<void> {
           })
           .option('after', afterDescription);
       },
-      ({ nameOrFile, after }) => {
-        ctrl.generateAndEvaluate(nameOrFile, after).catch((err) => rootLogger.root.error(err));
+      async ({ templateNameOrFile, after }) => {
+        try {
+          await ctrl.generateAndEvaluate(templateNameOrFile, after);
+        } catch (err) {
+          rootLogger.root.error('Unable to generate', { err: inspect(err) });
+        }
       },
     )
     .command(
@@ -199,16 +204,18 @@ async function main(): Promise<void> {
       'ask <template>',
       'Ask a question',
       (yargs) => {
-        return yargs.positional('template', {
-          describe: 'Name of the template',
-          type: 'string',
-          demandOption: true,
-          choices: availableTemplates,
-        }).option('model', {
-          describe: 'Model to use',
-          type: 'string',
-          choices: availableModels,
-        });
+        return yargs
+          .positional('template', {
+            describe: 'Name of the template',
+            type: 'string',
+            demandOption: true,
+            choices: availableTemplates,
+          })
+          .option('model', {
+            describe: 'Model to use',
+            type: 'string',
+            choices: availableModels,
+          });
       },
       async ({ template, model }) => {
         const prompt = await ctrl.ask(template, model);

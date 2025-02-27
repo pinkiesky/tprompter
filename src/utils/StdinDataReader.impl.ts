@@ -29,6 +29,10 @@ export class StdinDataReaderImpl implements StdinDataReader {
       });
 
       child.on('message', (message: { data: string }) => {
+        if (!message.data.endsWith('\n')) {
+          process.stdout.write('\n');
+        }
+
         resolve(message.data);
       });
 

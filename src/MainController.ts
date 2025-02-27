@@ -9,6 +9,7 @@ import { IO } from './utils/IO.js';
 import { StdinDataReader } from './utils/StdinDataReader.js';
 import { openFinder } from './utils/openFinder.js';
 import { AssetsService } from './assets/AssetsService.js';
+import { LLMService } from './llm/LLMService.js';
 
 @Service()
 export class MainController {
@@ -20,6 +21,7 @@ export class MainController {
     private io: IO,
     private stdinReader: StdinDataReader,
     private assetsService: AssetsService,
+    private llmService: LLMService,
   ) {}
 
   reportTokensCount(content: string): void {
@@ -90,5 +92,17 @@ export class MainController {
     }
 
     return asset;
+  }
+
+  async ask(nameOrFile: string, model?: string): Promise<string> {
+    const prompt = await this.promptsService.getPromptByNameOrPath(nameOrFile);
+    if (!prompt) {
+      throw new Error(`Prompt not found: ${nameOrFile}`);
+    }
+
+    const content = await prompt.generate();
+    this.reportTokensCount(content);
+
+    return this.llmService.ask(content, model);
   }
 }

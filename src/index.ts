@@ -10,6 +10,9 @@ import { MainController } from './MainController.js';
 import { setupContainer } from './di/index.js';
 import { LoggerService } from './logger/index.js';
 import { BUILD_INFO } from './buildInfo.js';
+import { AppConfig } from './config/AppConfig.js';
+import { AppConfigDataKeys } from './config/AppConfigData.js';
+import { LLMService } from './llm/LLMService.js';
 
 const afterDescription = {
   describe: 'What to do after generating the prompt',
@@ -18,18 +21,26 @@ const afterDescription = {
 };
 
 async function main(): Promise<void> {
+  const configService = Container.get(AppConfig);
+  await configService.loadPersistant();
+
   const ctrl = Container.get(MainController);
   const rootLogger = Container.get(LoggerService);
 
+  const llmService = Container.get(LLMService);
+
   const availableTemplates: string[] = await ctrl.listTemplates();
   const availabeAssets: string[] = await ctrl.listAssets();
+  const availableModels: string[] = await llmService.listModels();
 
-  const params = await yargs(hideBin(process.argv))
+  const parser = yargs(hideBin(process.argv))
     .scriptName('tprompter')
     .boolean('verbose')
     .alias('v', 'verbose')
+    .default('verbose', false)
     .describe('verbose', 'Increase verbosity')
     .boolean('quiet')
+    .default('quiet', false)
     .alias('q', 'quiet')
     .describe('quiet', 'Do not output anything')
     .usage('$0 <command> [options]')
@@ -38,6 +49,7 @@ async function main(): Promise<void> {
       'List available templates',
       () => {},
       () => {
+        console.log('list!');
         availableTemplates.forEach((p) => console.log(p));
       },
     )
@@ -183,20 +195,72 @@ async function main(): Promise<void> {
       },
       async () => {},
     )
+    .command(
+      'ask <template>',
+      'Ask a question',
+      (yargs) => {
+        return yargs.positional('template', {
+          describe: 'Name of the template',
+          type: 'string',
+          demandOption: true,
+          choices: availableTemplates,
+        }).option('model', {
+          describe: 'Model to use',
+          type: 'string',
+          choices: availableModels,
+        });
+      },
+      async ({ template, model }) => {
+        const prompt = await ctrl.ask(template, model);
+        console.log(prompt);
+      },
+    )
+    .command(
+      'config <configKey> [configValue]',
+      'Show or set current configuration',
+      (yargs) => {
+        return yargs
+          .positional('configKey', {
+            describe: 'Configuration key',
+            type: 'string',
+            choices: configService.getAvailableConfigKeys(),
+            demandOption: true,
+          })
+          .positional('configValue', {
+            describe: 'Configuration value',
+            type: 'string',
+          });
+      },
+      ({ configKey, configValue }) => {
+        if (configValue) {
+          configService
+            .setPersistentValue(configKey as AppConfigDataKeys, configValue)
+            .then(() => rootLogger.root.info('Config value set'))
+            .catch((err) => rootLogger.root.error(err));
+        } else {
+          const value = configService.getConfig()[configKey as AppConfigDataKeys];
+          console.log(value);
+        }
+      },
+    )
     .completion()
     .help()
     .demandCommand(1, 'You need at least one command before moving on')
     .version(false)
     .strict()
-    .parse();
+    .middleware(async (argv) => {
+      if (argv.verbose) {
+        rootLogger.setLevel('debug');
+      } else if (argv.quiet) {
+        rootLogger.setLevel('error');
+      } else {
+        rootLogger.setLevel('info');
+      }
 
-  if (params.verbose) {
-    rootLogger.setLevel('debug');
-  } else if (params.quiet) {
-    rootLogger.setLevel('error');
-  } else {
-    rootLogger.setLevel('info');
-  }
+      await configService.applyCLIArguments(argv);
+    });
+
+  await parser.parse();
 }
 
 setupContainer()

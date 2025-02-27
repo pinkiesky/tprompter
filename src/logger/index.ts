@@ -10,10 +10,7 @@ export class LoggerService {
   constructor() {
     this.root = winston.createLogger({
       level: 'info',
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple(),
-      ),
+      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
       transports: [new winston.transports.Console()],
     });
   }

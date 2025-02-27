@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { AppConfigData } from './AppConfigData.js';
+import { AppConfigData, AppConfigDataValuesTransformers } from './AppConfigData.js';
 import { ArgumentsCamelCase } from 'yargs';
 
 @Service()
@@ -8,8 +8,8 @@ export class CLIArgumentsToAppConfigMapper {
 
   map(args: ArgumentsCamelCase): Partial<AppConfigData> {
     return {
-      quiet: Boolean(args.quiet),
-      verbose: Boolean(args.verbose),
+      quiet: AppConfigDataValuesTransformers.quiet(args.quiet),
+      verbose: AppConfigDataValuesTransformers.verbose(args.verbose),
     };
   }
 }

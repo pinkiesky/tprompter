@@ -1,15 +1,36 @@
-export const AppConfigDataKeys = ['openAIApiKey', 'quiet', 'verbose'] as const;
-export type AppConfigDataKeys = (typeof AppConfigDataKeys)[number];
+const booleanParser = (raw: unknown): boolean => (typeof raw === 'boolean' ? raw : raw === 'true');
+const stringParser = (raw: unknown): string => `${raw}`;
+const numberParser = (raw: unknown): number => (typeof raw === 'string' ? parseInt(raw, 10) : 0);
 
-export class AppConfigData implements Partial<Record<AppConfigDataKeys, string | boolean>> {
+export interface AppConfigDataValues {
+  openAIApiKey?: string;
+  quiet?: boolean;
+  verbose?: boolean;
+  askMaxTokens?: number;
+  askModel?: string;
+}
+export const AppConfigDataValuesTransformers: Record<
+  keyof AppConfigDataValues,
+  (raw: unknown) => any
+> = {
+  openAIApiKey: stringParser,
+  quiet: booleanParser,
+  verbose: booleanParser,
+  askMaxTokens: numberParser,
+  askModel: stringParser,
+};
+
+export const AppConfigDataKeys = Object.keys(AppConfigDataValuesTransformers);
+
+export class AppConfigData implements AppConfigDataValues {
   public openAIApiKey?: string;
   public quiet?: boolean;
   public verbose?: boolean;
-  public maxAskTokens?: number;
+  public askMaxTokens?: number;
   public askModel?: string;
 
   static getAvailableKeys(): string[] {
-    return [...AppConfigDataKeys];
+    return AppConfigDataKeys;
   }
 
   constructor(data: Partial<AppConfigData> = {}) {

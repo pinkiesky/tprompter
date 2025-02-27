@@ -1,8 +1,8 @@
-import { AppConfig } from "../config/AppConfig.js";
-import { OpenAIService } from "./OpenAIService.js";
+import { AppConfig } from '../config/AppConfig.js';
+import { OpenAIService } from './OpenAIService.js';
 import { countTokens } from 'gpt-tokenizer';
-import { PromptTooLongError } from "./errors/PromptTooLongError.js";
-import { Service } from "typedi";
+import { PromptTooLongError } from './errors/PromptTooLongError.js';
+import { Service } from 'typedi';
 
 @Service()
 export class LLMService {
@@ -13,10 +13,10 @@ export class LLMService {
 
   async ask(prompt: string, mbModel?: string): Promise<string> {
     const config = this.config.getConfig();
-    if (config.maxAskTokens) {
+    if (config.askMaxTokens) {
       const tokenLength = countTokens(prompt);
-      if (tokenLength > config.maxAskTokens) {
-        throw new PromptTooLongError(tokenLength, config.maxAskTokens);
+      if (tokenLength > config.askMaxTokens) {
+        throw new PromptTooLongError(tokenLength, config.askMaxTokens);
       }
     }
 

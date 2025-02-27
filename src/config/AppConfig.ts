@@ -1,6 +1,10 @@
 import { Service } from 'typedi';
 import { PersistentConfigRepository } from './PersistentConfigRepository.js';
-import { AppConfigData } from './AppConfigData.js';
+import {
+  AppConfigData,
+  AppConfigDataValues,
+  AppConfigDataValuesTransformers,
+} from './AppConfigData.js';
 import { CLIArgumentsToAppConfigMapper } from './CLIArgumentsToConfigMapper.js';
 import { ArgumentsCamelCase } from 'yargs';
 import { InjectLogger } from '../logger/logger.decorator.js';
@@ -17,7 +21,7 @@ export class AppConfig {
     @InjectLogger() private logger: Logger,
   ) {}
 
-  async loadPersistant(): Promise<void> {
+  async loadPersistent(): Promise<void> {
     try {
       const raw = await this.repo.getRawConfig();
       this.persistentData = AppConfigData.deserialize(raw);
@@ -40,12 +44,23 @@ export class AppConfig {
     this.persistentData = AppConfigData.empty();
   }
 
-  async setPersistentValue<T extends keyof AppConfigData>(
+  async setPersistentValue<T extends keyof AppConfigDataValues>(
     key: T,
-    value: AppConfigData[T],
+    value: string,
   ): Promise<void> {
-    this.persistentData[key] = value;
-    await this.repo.saveRawConfig(this.persistentData.serialize());
+    const val = AppConfigDataValuesTransformers[key](value);
+    this.persistentData[key] = val;
+
+    await this.savePersistentConfig();
+  }
+
+  async deletePersistentValue(key: keyof AppConfigDataValues): Promise<void> {
+    delete this.persistentData[key];
+    await this.savePersistentConfig();
+  }
+
+  savePersistentConfig(): Promise<void> {
+    return this.repo.saveRawConfig(this.persistentData.serialize());
   }
 
   getConfig(): Readonly<AppConfigData> {

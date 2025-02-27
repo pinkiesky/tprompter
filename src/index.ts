@@ -11,9 +11,10 @@ import { setupContainer } from './di/index.js';
 import { LoggerService } from './logger/index.js';
 import { BUILD_INFO } from './buildInfo.js';
 import { AppConfig } from './config/AppConfig.js';
-import { AppConfigDataKeys } from './config/AppConfigData.js';
+import { AppConfigDataKeys, AppConfigDataValues } from './config/AppConfigData.js';
 import { LLMService } from './llm/LLMService.js';
 import { inspect } from 'node:util';
+import { PromptTooLongError } from './llm/errors/PromptTooLongError.js';
 
 const afterDescription = {
   describe: 'What to do after generating the prompt',
@@ -23,7 +24,7 @@ const afterDescription = {
 
 async function main(): Promise<void> {
   const configService = Container.get(AppConfig);
-  await configService.loadPersistant();
+  await configService.loadPersistent();
 
   const ctrl = Container.get(MainController);
   const rootLogger = Container.get(LoggerService);
@@ -218,8 +219,16 @@ async function main(): Promise<void> {
           });
       },
       async ({ template, model }) => {
-        const prompt = await ctrl.ask(template, model);
-        console.log(prompt);
+        try {
+          const prompt = await ctrl.ask(template, model);
+          console.log(prompt);
+        } catch (err) {
+          if (err instanceof PromptTooLongError) {
+            rootLogger.root.error(`Prompt is too long: ${err.length} > ${err.maxTokens}`);
+          } else {
+            rootLogger.root.error('Unable to ask', { err: inspect(err) });
+          }
+        }
       },
     )
     .command(
@@ -236,17 +245,35 @@ async function main(): Promise<void> {
           .positional('configValue', {
             describe: 'Configuration value',
             type: 'string',
+          })
+          .option('remove', {
+            describe: 'Delete the configuration value',
+            type: 'boolean',
+            default: false,
           });
       },
-      ({ configKey, configValue }) => {
+      ({ configKey, configValue, remove }) => {
+        if (remove) {
+          configService
+            .deletePersistentValue(configKey as keyof AppConfigDataValues)
+            .then(() => rootLogger.root.info('Config value deleted'))
+            .catch((err) => rootLogger.root.error(err));
+
+          return;
+        }
+
         if (configValue) {
           configService
-            .setPersistentValue(configKey as AppConfigDataKeys, configValue)
+            .setPersistentValue(configKey as keyof AppConfigDataValues, configValue)
             .then(() => rootLogger.root.info('Config value set'))
             .catch((err) => rootLogger.root.error(err));
         } else {
-          const value = configService.getConfig()[configKey as AppConfigDataKeys];
-          console.log(value);
+          const value = configService.getConfig()[configKey as keyof AppConfigDataValues];
+          if (typeof value === 'undefined') {
+            rootLogger.root.error('Config value not set');
+          } else {
+            console.log(value);
+          }
         }
       },
     )

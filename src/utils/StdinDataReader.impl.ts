@@ -14,7 +14,9 @@ export class StdinDataReaderImpl implements StdinDataReader {
 
   readData(placeholder = 'Input required'): Promise<string> {
     return new Promise((resolve, reject) => {
-      console.log(`${placeholder} (Press CTRL+D to finish):`);
+      if (process.stdin.isTTY) {
+        console.log(`${placeholder} (Press CTRL+D to finish):`);
+      }
 
       const dirname = path.dirname(decodeURI(new URL(import.meta.url).pathname));
       const childPath = path.resolve(dirname, 'readData.process.js');

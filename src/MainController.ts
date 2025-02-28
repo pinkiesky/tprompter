@@ -17,7 +17,7 @@ export class MainController {
     private actions: Actions,
     private archive: ArchiveService,
     @InjectLogger(MainController) private logger: Logger,
-    private promptsService: TemplateService,
+    private templateService: TemplateService,
     private io: IO,
     private stdinReader: StdinDataReader,
     private assetsService: AssetsService,
@@ -31,11 +31,11 @@ export class MainController {
   }
 
   listTemplates(): Promise<string[]> {
-    return this.promptsService.listTemplates();
+    return this.templateService.listTemplates();
   }
 
   async generateAndEvaluate(nameOrFile: string, after: AvailableActions): Promise<void> {
-    const prompt = await this.promptsService.getPromptByNameOrPath(nameOrFile);
+    const prompt = await this.templateService.getPromptByNameOrPath(nameOrFile);
     if (!prompt) {
       throw new Error(`Prompt not found: ${nameOrFile}`);
     }
@@ -45,7 +45,7 @@ export class MainController {
     this.reportTokensCount(content);
 
     await Promise.all([
-      this.archive.save({ description: nameOrFile, content }),
+      this.archive.save({ description: nameOrFile, content, type: 'generate' }),
       this.actions.evaluate(after, content),
     ]);
   }
@@ -61,8 +61,8 @@ export class MainController {
     await this.actions.evaluate(after, record.content);
   }
 
-  async uninstallPrompt(name: string) {
-    return this.promptsService.uninstallPrompt(name);
+  async uninstallTemplate(name: string) {
+    return this.templateService.uninstallTemplate(name);
   }
 
   async installTemplate(name: string, filepath?: string) {
@@ -73,11 +73,11 @@ export class MainController {
       content = await this.stdinReader.readData('Enter template content');
     }
 
-    return this.promptsService.installPrompt(name, content);
+    return this.templateService.installTemplate(name, content);
   }
 
-  async openPromptsFolder() {
-    const folder = await this.promptsService.getPromptsFolder();
+  async openTemplatesFolder() {
+    const folder = await this.templateService.getTemplatesFolder();
     await openFinder(folder);
   }
 
@@ -94,15 +94,18 @@ export class MainController {
     return asset;
   }
 
-  async ask(nameOrFile: string, model?: string): Promise<string> {
-    const prompt = await this.promptsService.getPromptByNameOrPath(nameOrFile);
-    if (!prompt) {
-      throw new Error(`Prompt not found: ${nameOrFile}`);
+  async ask(nameOrFile: string, after: AvailableActions, model?: string): Promise<void> {
+    const template = await this.templateService.getPromptByNameOrPath(nameOrFile);
+    if (!template) {
+      throw new Error(`Template not found: ${nameOrFile}`);
     }
 
-    const content = await prompt.generate();
-    this.reportTokensCount(content);
+    const content = await template.generate();
+    const response = await this.llmService.ask(content, model);
 
-    return this.llmService.ask(content, model);
+    await Promise.all([
+      this.archive.save({ description: nameOrFile, content: response, type: 'ask' }),
+      this.actions.evaluate(after, response),
+    ]);
   }
 }

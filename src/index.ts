@@ -126,7 +126,7 @@ async function main(): Promise<void> {
             },
             ({ name }) => {
               ctrl
-                .uninstallPrompt(name)
+                .uninstallTemplate(name)
                 .then(() => rootLogger.root.info('Prompt uninstalled'))
                 .catch((err) => rootLogger.root.error(err));
             },
@@ -136,7 +136,7 @@ async function main(): Promise<void> {
             'Open the folder with external templates',
             () => {},
             () => {
-              ctrl.openPromptsFolder().catch((err) => rootLogger.root.error(err));
+              ctrl.openTemplatesFolder().catch((err) => rootLogger.root.error(err));
             },
           );
       },
@@ -217,12 +217,16 @@ async function main(): Promise<void> {
             describe: 'Model to use',
             type: 'string',
             choices: availableModels,
+          })
+          .option('after', {
+            ...afterDescription,
+            description: 'What to do after asking the question',
+            default: AvailableActions.PRINT_TO_CONSOLE,
           });
       },
-      async ({ template, model, ...rest }) => {
+      async ({ template, model, after, ...rest }) => {
         try {
-          const prompt = await ctrl.ask(template, model);
-          console.log(prompt);
+          await ctrl.ask(template, after, model);
         } catch (err) {
           if (err instanceof PromptTooLongError) {
             rootLogger.root.error(`Prompt is too long: ${err.length} > ${err.maxTokens}`);

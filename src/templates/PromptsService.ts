@@ -41,11 +41,11 @@ export class TemplateService {
     ];
   }
 
-  async installPrompt(name: string, content: string): Promise<void> {
+  async installTemplate(name: string, content: string): Promise<void> {
     await this.externalPromptsCatalog.install(name, content);
   }
 
-  async uninstallPrompt(name: string): Promise<void> {
+  async uninstallTemplate(name: string): Promise<void> {
     await this.externalPromptsCatalog.uninstall(name);
   }
 
@@ -53,7 +53,7 @@ export class TemplateService {
     return nameOrFile.startsWith('/') || nameOrFile.startsWith('./');
   }
 
-  async getPromptsFolder(): Promise<string> {
+  async getTemplatesFolder(): Promise<string> {
     return this.externalPromptsCatalog.getTemplatesFolder();
   }
 }

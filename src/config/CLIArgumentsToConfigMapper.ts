@@ -8,8 +8,8 @@ export class CLIArgumentsToAppConfigMapper {
 
   map(args: ArgumentsCamelCase): Partial<AppConfigData> {
     return {
-      quiet: AppConfigDataValuesTransformers.quiet(args.quiet),
-      verbose: AppConfigDataValuesTransformers.verbose(args.verbose),
+      quiet: AppConfigDataValuesTransformers.quiet(args.quiet, false),
+      verbose: AppConfigDataValuesTransformers.verbose(args.verbose, false),
     };
   }
 }

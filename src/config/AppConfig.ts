@@ -12,7 +12,7 @@ import { Logger } from '../logger/index.js';
 
 export const DEFAULT_APP_CONFIG = new AppConfigData({
   askDefaultModel: 'gpt-4o-mini',
-  askMaxTokens: 3000,
+  askMaxTokens: 15000,
 });
 
 @Service()
@@ -54,7 +54,7 @@ export class AppConfig {
     key: T,
     value: string,
   ): Promise<void> {
-    const val = AppConfigDataValuesTransformers[key](value);
+    const val = AppConfigDataValuesTransformers[key](value, true);
     this.persistentData[key] = val;
 
     await this.savePersistentConfig();

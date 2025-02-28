@@ -11,10 +11,11 @@ import { setupContainer } from './di/index.js';
 import { LoggerService } from './logger/index.js';
 import { BUILD_INFO } from './buildInfo.js';
 import { AppConfig } from './config/AppConfig.js';
-import { AppConfigDataKeys, AppConfigDataValues } from './config/AppConfigData.js';
+import { AppConfigDataValues } from './config/AppConfigData.js';
 import { LLMService } from './llm/LLMService.js';
 import { inspect } from 'node:util';
 import { PromptTooLongError } from './llm/errors/PromptTooLongError.js';
+import { MissconfigurationError } from './utils/errors/MisconfigurationError.js';
 
 const afterDescription = {
   describe: 'What to do after generating the prompt',
@@ -218,13 +219,21 @@ async function main(): Promise<void> {
             choices: availableModels,
           });
       },
-      async ({ template, model }) => {
+      async ({ template, model, ...rest }) => {
         try {
           const prompt = await ctrl.ask(template, model);
           console.log(prompt);
         } catch (err) {
           if (err instanceof PromptTooLongError) {
             rootLogger.root.error(`Prompt is too long: ${err.length} > ${err.maxTokens}`);
+            rootLogger.root.error(
+              'Try to reduce the length of the prompt or configure the max tokens',
+            );
+            rootLogger.root.error(`${rest['$0']} config askMaxTokens <maxTokens>`);
+          } else if (err instanceof MissconfigurationError && err.key === 'openAIApiKey') {
+            rootLogger.root.error('OpenAI API key is not set');
+            rootLogger.root.error(`Run \`${rest['$0']} config openAIApiKey <key>\` to set it`);
+            rootLogger.root.error('You can get a personal API key at https://platform.openai.com');
           } else {
             rootLogger.root.error('Unable to ask', { err: inspect(err) });
           }

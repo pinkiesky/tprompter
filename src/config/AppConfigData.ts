@@ -1,6 +1,4 @@
-const booleanParser = (raw: unknown): boolean => (typeof raw === 'boolean' ? raw : raw === 'true');
-const stringParser = (raw: unknown): string => `${raw}`;
-const numberParser = (raw: unknown): number => (typeof raw === 'string' ? parseInt(raw, 10) : 0);
+import { StringParsers } from '../utils/Parsers.js';
 
 export interface AppConfigDataValues {
   openAIApiKey?: string;
@@ -11,13 +9,13 @@ export interface AppConfigDataValues {
 }
 export const AppConfigDataValuesTransformers: Record<
   keyof AppConfigDataValues,
-  (raw: unknown) => any
+  (raw: unknown, strict: boolean) => any
 > = {
-  openAIApiKey: stringParser,
-  quiet: booleanParser,
-  verbose: booleanParser,
-  askMaxTokens: numberParser,
-  askDefaultModel: stringParser,
+  openAIApiKey: StringParsers.stringParser,
+  quiet: StringParsers.booleanParser,
+  verbose: StringParsers.booleanParser,
+  askMaxTokens: StringParsers.numberParser,
+  askDefaultModel: StringParsers.stringParser,
 };
 
 export const AppConfigDataKeys = Object.keys(AppConfigDataValuesTransformers);

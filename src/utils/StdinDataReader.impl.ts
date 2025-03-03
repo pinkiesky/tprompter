@@ -3,6 +3,7 @@ import path from 'node:path';
 import { ReadOptions, StdinDataReader } from './StdinDataReader.js';
 import { InjectLogger } from '../logger/logger.decorator.js';
 import { Logger } from '../logger/index.js';
+import chalk from 'chalk';
 
 /**
  * Implementation of the StdinDataReader interface that reads data from the standard input.
@@ -20,7 +21,7 @@ export class StdinDataReaderImpl implements StdinDataReader {
 
     return new Promise((resolve, reject) => {
       if (process.stdin.isTTY) {
-        console.log(`${placeholder} (Press CTRL+D to finish):`);
+        console.log(chalk.green(`❯ Input required (Press CTRL+D to finish):`), placeholder);
       }
 
       const dirname = path.dirname(decodeURI(new URL(import.meta.url).pathname));

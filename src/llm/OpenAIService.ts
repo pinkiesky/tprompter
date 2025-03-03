@@ -52,7 +52,6 @@ export class OpenAIService {
 
     messages.push({ role: 'user', content: prompt });
 
-    console.log(messages);
     const completion = await this.client.chat.completions.create({
       model: actualModel,
       messages,

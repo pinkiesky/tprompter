@@ -52,7 +52,6 @@ async function main(): Promise<void> {
       'List available templates',
       () => {},
       () => {
-        console.log('list!');
         availableTemplates.forEach((p) => console.log(p));
       },
     )

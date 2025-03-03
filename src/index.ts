@@ -18,7 +18,7 @@ import { PromptTooLongError } from './llm/errors/PromptTooLongError.js';
 import { MissconfigurationError } from './utils/errors/MisconfigurationError.js';
 
 const afterDescription = {
-  describe: 'What to do after generating the prompt',
+  describe: 'What to do after',
   choices: Object.values(AvailableActions) as AvailableActions[],
   default: AvailableActions.COPY_TO_CLIPBOARD,
 };

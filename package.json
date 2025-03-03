@@ -46,6 +46,7 @@
     "open": "^10.1.0",
     "openai": "^4.85.4",
     "reflect-metadata": "^0.2.2",
+    "tmp-promise": "^3.0.3",
     "typedi": "^0.10.0",
     "winston": "^3.17.0",
     "yaml": "^2.7.0",

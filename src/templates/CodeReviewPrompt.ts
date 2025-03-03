@@ -25,6 +25,8 @@ ${inputCode}
 
 Your task is to make a code review. Please, consider the code maintanibility, security and logical concerns, and any improvements you can suggest.
 Your task is very important to the team, and your feedback will help to improve the overall code quality and maintainability of the project.
+Don't write the abstract feedback, be specific and provide examples.
+Don't share a lot of positive feedback, focus on the improvements.
   `.trim();
   }
 }

@@ -3,6 +3,8 @@ import { runDisposableServer } from '../utils/disposableServer/index.js';
 import open from 'open';
 import { InjectLogger } from '../logger/logger.decorator.js';
 import { Logger } from '../logger/index.js';
+import { file } from 'tmp-promise';
+import { IO } from '../utils/IO.js';
 
 export enum AvailableActions {
   PRINT_TO_CONSOLE = 'print',
@@ -13,7 +15,10 @@ export enum AvailableActions {
 
 @Service()
 export class Actions {
-  constructor(@InjectLogger(Actions) private logger: Logger) {}
+  constructor(
+    @InjectLogger(Actions) private logger: Logger,
+    private io: IO,
+  ) {}
 
   private actionsMap: Record<AvailableActions, (s: string) => void> = {
     [AvailableActions.PRINT_TO_CONSOLE]: this.printToConsole,
@@ -49,6 +54,9 @@ export class Actions {
   }
 
   async runEditor(content: string): Promise<void> {
-    throw new Error('Not implemented');
+    const { path } = await file({ postfix: '.txt' });
+    await this.io.writeFile(path, content);
+
+    await open(path);
   }
 }

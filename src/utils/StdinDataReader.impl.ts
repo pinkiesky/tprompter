@@ -1,6 +1,6 @@
 import { fork } from 'node:child_process';
 import path from 'node:path';
-import { StdinDataReader } from './StdinDataReader.js';
+import { ReadOptions, StdinDataReader } from './StdinDataReader.js';
 import { InjectLogger } from '../logger/logger.decorator.js';
 import { Logger } from '../logger/index.js';
 
@@ -12,7 +12,12 @@ import { Logger } from '../logger/index.js';
 export class StdinDataReaderImpl implements StdinDataReader {
   constructor(@InjectLogger(StdinDataReaderImpl) private logger: Logger) {}
 
-  readData(placeholder = 'Input required'): Promise<string> {
+  readData(placeholder = 'Input required', options: ReadOptions = {}): Promise<string> {
+    if (process.stdin.isTTY && options.onlyPipe) {
+      this.logger.debug('No data in stdin, skipping');
+      return Promise.resolve('');
+    }
+
     return new Promise((resolve, reject) => {
       if (process.stdin.isTTY) {
         console.log(`${placeholder} (Press CTRL+D to finish):`);

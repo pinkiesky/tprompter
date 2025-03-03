@@ -244,6 +244,48 @@ async function main(): Promise<void> {
       },
     )
     .command(
+      'ask_agent <question..>',
+      'Ask a question',
+      (yargs) => {
+        return yargs
+          .positional('question', {
+            describe: 'Name of the template',
+            type: 'string',
+            demandOption: true,
+            array: true,
+          })
+          .option('model', {
+            describe: 'Model to use',
+            type: 'string',
+            choices: availableModels,
+          })
+          .option('after', {
+            ...afterDescription,
+            description: 'What to do after asking the question',
+            default: AvailableActions.PRINT_TO_CONSOLE,
+          });
+      },
+      async ({ question, model, after, ...rest }) => {
+        try {
+          await ctrl.question(question.join(' '), after, model);
+        } catch (err) {
+          if (err instanceof PromptTooLongError) {
+            rootLogger.root.error(`Prompt is too long: ${err.length} > ${err.maxTokens}`);
+            rootLogger.root.error(
+              'Try to reduce the length of the prompt or configure the max tokens',
+            );
+            rootLogger.root.error(`${rest['$0']} config agentMaxTokens <maxTokens>`);
+          } else if (err instanceof MissconfigurationError && err.key === 'openAIApiKey') {
+            rootLogger.root.error('OpenAI API key is not set');
+            rootLogger.root.error(`Run \`${rest['$0']} config openAIApiKey <key>\` to set it`);
+            rootLogger.root.error('You can get a personal API key at https://platform.openai.com');
+          } else {
+            rootLogger.root.error('Unable to run agent', { err: inspect(err) });
+          }
+        }
+      },
+    )
+    .command(
       'config <configKey> [configValue]',
       'Show or set current configuration',
       (yargs) => {

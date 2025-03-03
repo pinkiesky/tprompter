@@ -346,6 +346,17 @@ async function main(): Promise<void> {
       }
 
       await configService.applyCLIArguments(argv);
+    })
+    .middleware(async (argv) => {
+      if (argv.after) {
+        const action = argv.after as AvailableActions;
+        if (action === AvailableActions.OPEN_IN_CHATGPT) {
+          rootLogger.root.warn(
+            `'${AvailableActions.OPEN_IN_CHATGPT}' action requires the install extra scripts in the browser`,
+          );
+          rootLogger.root.warn('Please, check the README.md for more information');
+        }
+      }
     });
 
   await parser.parse();

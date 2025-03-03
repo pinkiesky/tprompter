@@ -11,16 +11,16 @@ export class LLMService {
     private config: AppConfig,
   ) {}
 
-  async ask(prompt: string, mbModel?: string): Promise<string> {
+  async agent(prompt: string, mbModel?: string): Promise<string> {
     const config = this.config.getConfig();
-    if (config.askMaxTokens) {
+    if (config.agentMaxTokens) {
       const tokenLength = countTokens(prompt);
-      if (tokenLength > config.askMaxTokens) {
-        throw new PromptTooLongError(tokenLength, config.askMaxTokens);
+      if (tokenLength > config.agentMaxTokens) {
+        throw new PromptTooLongError(tokenLength, config.agentMaxTokens);
       }
     }
 
-    const model = mbModel ?? config.askDefaultModel;
+    const model = mbModel ?? config.agentDefaultModel;
     return this.openAI.getCompletion(prompt, model);
   }
 

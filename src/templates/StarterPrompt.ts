@@ -23,7 +23,7 @@ You are a senior developer at a software company. You are provided with the foll
 ${inputCode}
 \`\`\`
 
-I will write you questions or ask for favors based on the code provided.
+I will write you questions or agent for favors based on the code provided.
 `.trim();
   }
 }

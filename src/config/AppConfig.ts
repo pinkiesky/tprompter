@@ -11,8 +11,8 @@ import { InjectLogger } from '../logger/logger.decorator.js';
 import { Logger } from '../logger/index.js';
 
 export const DEFAULT_APP_CONFIG = new AppConfigData({
-  askDefaultModel: 'gpt-4o-mini',
-  askMaxTokens: 15000,
+  agentDefaultModel: 'gpt-4o-mini',
+  agentMaxTokens: 15000,
 });
 
 @Service()

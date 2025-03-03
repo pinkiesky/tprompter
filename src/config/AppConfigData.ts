@@ -4,8 +4,8 @@ export interface AppConfigDataValues {
   openAIApiKey?: string;
   quiet?: boolean;
   verbose?: boolean;
-  askMaxTokens?: number;
-  askDefaultModel?: string;
+  agentMaxTokens?: number;
+  agentDefaultModel?: string;
 }
 export const AppConfigDataValuesTransformers: Record<
   keyof AppConfigDataValues,
@@ -14,8 +14,8 @@ export const AppConfigDataValuesTransformers: Record<
   openAIApiKey: StringParsers.stringParser,
   quiet: StringParsers.booleanParser,
   verbose: StringParsers.booleanParser,
-  askMaxTokens: StringParsers.numberParser,
-  askDefaultModel: StringParsers.stringParser,
+  agentMaxTokens: StringParsers.numberParser,
+  agentDefaultModel: StringParsers.stringParser,
 };
 
 export const AppConfigDataKeys = Object.keys(AppConfigDataValuesTransformers);
@@ -24,8 +24,8 @@ export class AppConfigData implements AppConfigDataValues {
   public openAIApiKey?: string;
   public quiet?: boolean;
   public verbose?: boolean;
-  public askMaxTokens?: number;
-  public askDefaultModel?: string;
+  public agentMaxTokens?: number;
+  public agentDefaultModel?: string;
 
   static getAvailableKeys(): string[] {
     return AppConfigDataKeys;

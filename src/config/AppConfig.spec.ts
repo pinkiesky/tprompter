@@ -36,8 +36,8 @@ describe(AppConfig.name, () => {
         openAIApiKey: '123',
         quiet: true,
         verbose: false,
-        askMaxTokens: DEFAULT_APP_CONFIG.askMaxTokens,
-        askDefaultModel: DEFAULT_APP_CONFIG.askDefaultModel,
+        agentMaxTokens: DEFAULT_APP_CONFIG.agentMaxTokens,
+        agentDefaultModel: DEFAULT_APP_CONFIG.agentDefaultModel,
       });
     });
   });

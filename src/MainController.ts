@@ -94,17 +94,17 @@ export class MainController {
     return asset;
   }
 
-  async ask(nameOrFile: string, after: AvailableActions, model?: string): Promise<void> {
+  async agent(nameOrFile: string, after: AvailableActions, model?: string): Promise<void> {
     const template = await this.templateService.getPromptByNameOrPath(nameOrFile);
     if (!template) {
       throw new Error(`Template not found: ${nameOrFile}`);
     }
 
     const content = await template.generate();
-    const response = await this.llmService.ask(content, model);
+    const response = await this.llmService.agent(content, model);
 
     await Promise.all([
-      this.archive.save({ description: nameOrFile, content: response, type: 'ask' }),
+      this.archive.save({ description: nameOrFile, content: response, type: 'agent' }),
       this.actions.evaluate(after, response),
     ]);
   }

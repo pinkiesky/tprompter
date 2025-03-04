@@ -47,7 +47,7 @@ npm install -g tprompter
 
 ### From source code
 
-```
+```bash
 # remove previous version && build && install
 npm uninstall -g . && npm run build && npm install -g .
 ```

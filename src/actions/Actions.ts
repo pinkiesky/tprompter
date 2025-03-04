@@ -5,9 +5,8 @@ import { InjectLogger } from '../logger/logger.decorator.js';
 import { Logger } from '../logger/index.js';
 import { file } from 'tmp-promise';
 import { IO } from '../utils/IO.js';
-// @ts-expect-error - no types available
-import markdownToCli from 'cli-markdown';
 import hljs from 'highlight.js';
+import { MarkdownToTerminal } from '../md/MarkdownToTerminal.js';
 
 export enum AvailableActions {
   PRINT_TO_CONSOLE = 'print',
@@ -22,6 +21,7 @@ export class Actions {
   constructor(
     @InjectLogger(Actions) private logger: Logger,
     private io: IO,
+    private m2t: MarkdownToTerminal,
   ) {
     if (!hljs.listLanguages().includes('fish')) {
       hljs.registerLanguage('fish', () => hljs.getLanguage('bash')!);
@@ -47,7 +47,7 @@ export class Actions {
   }
 
   async printToConsole(content: string): Promise<void> {
-    const out = markdownToCli(content);
+    const out = this.m2t.convert(content);
     this.printToConsoleRaw(out);
   }
 

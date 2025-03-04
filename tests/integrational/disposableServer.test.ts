@@ -12,7 +12,7 @@ describe('disposableServer', () => {
 
       expect(text).toBe(content);
 
-      expect(fetch(url)).rejects.toThrow('ECONNREFUSED');
+      await expect(fetch(url)).rejects.toThrow();
     } finally {
       server.close();
     }

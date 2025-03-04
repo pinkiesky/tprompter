@@ -13,7 +13,9 @@
   },
   "bin": "./dist/index.js",
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest ./src/",
+    "test:integrational": "NODE_OPTIONS=--experimental-vm-modules jest ./tests/integrational",
+    "test": "npm run test:unit && npm run test:integrational",
     "start": "make build --silent && node ./dist/index.js",
     "format": "prettier --write .",
     "build": "make build"

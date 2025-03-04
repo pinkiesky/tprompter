@@ -5,20 +5,24 @@ import { ArchiveService } from '../../src/archive/Archive.js';
 import { Container } from 'typedi';
 import { PathsToken } from '../../src/di/tokens.js';
 import { Paths } from 'env-paths';
+import { ArchiveRecord } from '../../src/archive/index.js';
 
 describe(ArchiveService.name, () => {
   const fixtures = [
     {
       description: '1',
       content: '1',
+      type: 'generate',
     },
     {
       description: '2',
       content: '2',
+      type: 'generate',
     },
     {
       description: '3',
       content: '3',
+      type: 'generate',
     },
   ];
 
@@ -34,7 +38,7 @@ describe(ArchiveService.name, () => {
     archiveService = Container.get(ArchiveService);
 
     for (const fixture of fixtures) {
-      await archiveService.save(fixture);
+      await archiveService.save(fixture as any);
     }
   });
 

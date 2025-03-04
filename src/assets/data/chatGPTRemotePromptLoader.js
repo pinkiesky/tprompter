@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT Remote Prompt Loader
 // @namespace    http://tampermonkey.net/
-// @version      2024-12-27
+// @version      2025-03-04
 // @description  automates the process of loading external text content into a webpage’s prompt interface
 // @author       You
 // @match        https://chatgpt.com/
@@ -9,9 +9,26 @@
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
 
-function putTextToInputElement(input, text) {
+function putTextToInputElement(htmlDiv, text) {
   const paragraphs = text.split('\n');
-  input.innerHTML = paragraphs.map((p) => `<p>${p}</p>`).join('\n');
+  putTextToInputElementImpl(htmlDiv, paragraphs);
+}
+
+function putTextToInputElementImpl(htmlDiv, paragraphs) {
+  if (!paragraphs.length) {
+    return;
+  }
+
+  const paragraphsToInsert = paragraphs.splice(0, 500);
+  paragraphsToInsert.forEach((paragraph) => {
+    const element = document.createElement('p');
+    element.innerText = paragraph;
+    htmlDiv.appendChild(element);
+  });
+
+  setTimeout(() => {
+    putTextToInputElementImpl(htmlDiv, paragraphs);
+  }, 100);
 }
 
 function getUrlFromHash(hash) {

@@ -244,7 +244,7 @@ async function main(): Promise<void> {
       },
     )
     .command(
-      'ask_agent <question..>',
+      'ask <question..>',
       'Ask a question',
       (yargs) => {
         return yargs

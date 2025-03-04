@@ -18,7 +18,8 @@
     "test": "npm run test:unit && npm run test:integrational",
     "start": "make build --silent && node ./dist/index.js",
     "format": "prettier --write .",
-    "build": "make build"
+    "build": "make build",
+    "local:install": "npm run build && npm uninstall -g . && npm install -g ."
   },
   "keywords": [
     "typescript",

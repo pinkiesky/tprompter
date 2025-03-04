@@ -2,7 +2,6 @@ import { Container, Service } from 'typedi';
 import { WriteUnitTestsPrompt } from '../WriteUnitTestsPrompt.js';
 import { IPrompt } from '../index.js';
 import { CodeReviewPrompt } from '../CodeReviewPrompt.js';
-import { WriteBoilerplatePrompt } from '../WriteBoilerplatePrompt.js';
 import { StarterPrompt } from '../StarterPrompt.js';
 import { CommitMessagePrompt } from '../CommitMessagePrompt.js';
 
@@ -14,7 +13,6 @@ export class BuiltinTemplatesCatalog {
     this.addTemplate([
       Container.get(WriteUnitTestsPrompt),
       Container.get(CodeReviewPrompt),
-      Container.get(WriteBoilerplatePrompt),
       Container.get(StarterPrompt),
       Container.get(CommitMessagePrompt),
     ]);

@@ -13,23 +13,23 @@ export class WriteUnitTestsPrompt implements IPrompt {
   ) {}
 
   async generate(): Promise<string> {
-    const inputCodeRaw = await this.stdinReader.readData('Enter the TypeScript + NestJS code:');
-    const inputExamplesRaw = await this.stdinReader.readData('Enter the Jest unit test examples:');
+    const inputExamplesRaw = await this.stdinReader.readData('Enter unit test examples:');
+    const inputCodeRaw = await this.stdinReader.readData('Enter the code that should be tested:');
 
     const inputCode = await this.enricher.enrichRawInput(inputCodeRaw.trim());
     const inputExamples = await this.enricher.enrichRawInput(inputExamplesRaw.trim());
 
     return `
 You are a senior developer at a software company. You have been tasked with writing unit tests a code.
-You can use the following Jest unit test examples for reference:
+You can use the following unit test examples for reference:
 
-\`\`\`typescript
+\`\`\`
 ${inputExamples}
 \`\`\`
 
-You are provided with the following TypeScript + NestJS code that needs to be tested:
+You are provided with the following code that needs to be tested:
 
-\`\`\`typescript
+\`\`\`
 ${inputCode}
 \`\`\`
 
@@ -39,7 +39,7 @@ Your task is to:
 	3.	Use proper mocking and assertions where necessary to simulate real-world behavior and dependencies.
 
 The output should include:
-	•	A complete unit test file in Jest that adheres to best practices.
+	•	A complete unit test file in that adheres to best practices.
 	•	Avoid long comments and explanation. Instead, focus on writing clean, concise, and maintainable code.
 `.trim();
   }

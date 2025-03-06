@@ -4,6 +4,7 @@ import { ReadOptions, StdinDataReader } from './StdinDataReader.js';
 import { InjectLogger } from '../logger/logger.decorator.js';
 import { Logger } from '../logger/index.js';
 import chalk from 'chalk';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Implementation of the StdinDataReader interface that reads data from the standard input.
@@ -24,9 +25,8 @@ export class StdinDataReaderImpl implements StdinDataReader {
         console.log(chalk.green(`❯ Input required (Press CTRL+D to finish):`), placeholder);
       }
 
-      const dirname = path.dirname(decodeURI(new URL(import.meta.url).pathname));
-      const childPath = path.resolve(dirname, 'readData.process.js');
-
+      const dirname = path.dirname(fileURLToPath(import.meta.url));
+      const childPath = path.join(dirname, 'readData.process.js');
       const child = fork(childPath, [], {
         stdio: ['inherit', 'pipe', 'pipe', 'ipc'],
       });

@@ -11,6 +11,37 @@ The tool automatically generates prompts, embeds local file content (for code re
 
 > Work in Progress
 
+- [❯ tprompter](#-tprompter)
+  - [Core Features](#core-features)
+  - [Usage Examples](#usage-examples)
+    - [Ask a Question in Terminal](#ask-a-question-in-terminal)
+    - [Run an Agent](#run-an-agent)
+    - [Run a Chain of Agents](#run-a-chain-of-agents)
+    - [Embedding](#embedding)
+    - [Prompts generator](#prompts-generator)
+    - [Configuration](#configuration)
+  - [Build and Installation](#build-and-installation)
+    - [Install from the npm Registry](#install-from-the-npm-registry)
+    - [Install from Source Code](#install-from-source-code)
+  - [Out-of-the-Box Available Templates and Agents](#out-of-the-box-available-templates-and-agents)
+  - [Usage](#usage)
+    - [Help](#help)
+    - [List Available Agent/Prompt Templates](#list-available-agentprompt-templates)
+    - [Generate a Prompt by Template Name](#generate-a-prompt-by-template-name)
+    - [Generate a Prompt from a File](#generate-a-prompt-from-a-file)
+    - [Retrieve the Last Prompt from Archive](#retrieve-the-last-prompt-from-archive)
+    - [Install a Custom Template (from File)](#install-a-custom-template-from-file)
+    - [Uninstall a Custom Template](#uninstall-a-custom-template)
+    - [Open the Templates Folder](#open-the-templates-folder)
+  - [File Embedding](#file-embedding)
+  - [FAQ](#faq)
+    - [What Actions Are Available?](#what-actions-are-available)
+    - [How Does "Open in ChatGPT" Work?](#how-does-open-in-chatgpt-work)
+      - [How to Install the Injection Script](#how-to-install-the-injection-script)
+    - [How to Install Shell Completion (bash/zsh)](#how-to-install-shell-completion-bashzsh)
+    - [How to Install Shell Completion (fish)](#how-to-install-shell-completion-fish)
+    - [How to contribute?](#how-to-contribute)
+
 ## Core Features
 
 - Built-in and custom agents and chains of agents

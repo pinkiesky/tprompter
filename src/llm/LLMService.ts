@@ -30,8 +30,8 @@ export class LLMService {
 
     try {
       return await this.openAI.getCompletion(prompt, {
-        model: this.config.getConfig().agentDefaultModel ?? 'gpt-4o-mini',
-        ...opts,
+        model: opts?.model ?? this.config.getConfig().agentDefaultModel ?? 'gpt-4o-mini',
+        developerMessages: opts?.developerMessages,
       });
     } finally {
       clearTimeout(timeoutId);

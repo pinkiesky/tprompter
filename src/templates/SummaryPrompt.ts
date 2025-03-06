@@ -4,8 +4,8 @@ import { IPrompt } from './index.js';
 import { TextDataEnricher } from '../textDataEnricher/TextDataEnricher.js';
 
 @Service()
-export class ChangelogPrompt implements IPrompt {
-  name = 'changelog';
+export class SummaryPrompt implements IPrompt {
+  name = 'summary';
 
   constructor(
     private stdinReader: StdinDataReader,
@@ -17,15 +17,16 @@ export class ChangelogPrompt implements IPrompt {
     const inputCode = await this.enricher.enrichRawInput(inputCodeRaw.trim());
 
     return `
-You are an AI assistant specialized in generating detailed changelogs for software projects.
+You are an AI assistant specialized in generating concise summaries.
 
-I will provide you with a \`git diff\` (the changes made in a codebase). Your tasks are to:
-1. Analyze the diff to identify what changes have been made.
-2. Summarize these changes in a detailed format that includes the nature of the changes, the reason
-  behind them, and any relevant context.
-3. Structure the changelog in a way that clearly highlights additions, deletions, and modifications.
+I will provide you with a text. Your tasks are to:
+1. Read the text and understand the main points.
+2. Summarize the text in a concise format that includes the main ideas and key points.
+3. Structure the summary in a way that clearly highlights the most important information.
 
-**Here is the diff:**
+Be short and to the point. Your users are looking for a quick overview of the text.
+
+**Here is the text:**
 ${inputCode}
       `.trim();
   }

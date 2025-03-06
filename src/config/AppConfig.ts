@@ -13,6 +13,7 @@ import { Logger } from '../logger/index.js';
 export const DEFAULT_APP_CONFIG = new AppConfigData({
   agentDefaultModel: 'gpt-4o-mini',
   agentMaxTokens: 15000,
+  appName: 'tprompter',
 });
 
 @Service()

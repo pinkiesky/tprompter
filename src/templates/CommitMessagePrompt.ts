@@ -25,6 +25,7 @@ I will provide you with a \`git diff\` (the changes made in a codebase). Your ta
 3. Focus on *why* these changes were made and *what* they do.
 4. Keep the message under 72 characters if possible (so it fits into common git commit formatting conventions).
 5. Do not include boilerplate text like "Commit message:"—just provide the commit text.
+6. Wrap all variables in \` backticks.
 
 **Here is the diff:**
 ${inputCode}

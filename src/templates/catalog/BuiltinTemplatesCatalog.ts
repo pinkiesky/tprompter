@@ -5,6 +5,7 @@ import { CodeReviewPrompt } from '../CodeReviewPrompt.js';
 import { StarterPrompt } from '../StarterPrompt.js';
 import { CommitMessagePrompt } from '../CommitMessagePrompt.js';
 import { ChangelogPrompt } from '../ChangelogPrompt.js';
+import { SummaryPrompt } from '../SummaryPrompt.js';
 
 @Service()
 export class BuiltinTemplatesCatalog {
@@ -17,6 +18,7 @@ export class BuiltinTemplatesCatalog {
       Container.get(StarterPrompt),
       Container.get(CommitMessagePrompt),
       Container.get(ChangelogPrompt),
+      Container.get(SummaryPrompt),
     ]);
   }
 

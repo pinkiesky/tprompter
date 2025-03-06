@@ -6,7 +6,7 @@ import { InjectLogger } from '../logger/logger.decorator.js';
 import { Logger } from '../logger/index.js';
 
 export interface OpenAICompletionOptions {
-  model?: string;
+  model: string;
   developerMessages?: string[];
 }
 
@@ -34,8 +34,11 @@ export class OpenAIService {
     return this._client;
   }
 
-  async getCompletion(prompt: string, options: OpenAICompletionOptions = {}): Promise<string> {
-    const actualModel = options.model ?? 'gpt-4o-mini';
+  async getCompletion(
+    userMessages: string | string[],
+    options: OpenAICompletionOptions,
+  ): Promise<string> {
+    const actualModel = options.model;
 
     this.logger.debug('Getting completion from OpenAI', { actualModel });
 
@@ -50,7 +53,15 @@ export class OpenAIService {
       );
     }
 
-    messages.push({ role: 'user', content: prompt });
+    if (Array.isArray(userMessages)) {
+      messages.push(
+        ...userMessages.map(
+          (content) => ({ role: 'user', content }) as OpenAI.ChatCompletionMessageParam,
+        ),
+      );
+    } else {
+      messages.push({ role: 'user', content: userMessages });
+    }
 
     const completion = await this.client.chat.completions.create({
       model: actualModel,

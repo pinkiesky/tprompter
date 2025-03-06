@@ -6,6 +6,7 @@ export interface AppConfigDataValues {
   verbose?: boolean;
   agentMaxTokens?: number;
   agentDefaultModel?: string;
+  appName: string;
 }
 export const AppConfigDataValuesTransformers: Record<
   keyof AppConfigDataValues,
@@ -16,6 +17,7 @@ export const AppConfigDataValuesTransformers: Record<
   verbose: StringParsers.booleanParser,
   agentMaxTokens: StringParsers.numberParser,
   agentDefaultModel: StringParsers.stringParser,
+  appName: StringParsers.stringParser,
 };
 
 export const AppConfigDataKeys = Object.keys(AppConfigDataValuesTransformers);
@@ -26,6 +28,7 @@ export class AppConfigData implements AppConfigDataValues {
   public verbose?: boolean;
   public agentMaxTokens?: number;
   public agentDefaultModel?: string;
+  public appName!: string;
 
   static getAvailableKeys(): string[] {
     return AppConfigDataKeys;

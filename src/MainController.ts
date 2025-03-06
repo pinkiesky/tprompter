@@ -111,9 +111,7 @@ export class MainController {
 
   async question(question: string, after: AvailableActions, model?: string): Promise<void> {
     const pipeContent = await this.stdinReader.readData('', { onlyPipe: true });
-    const prompt = pipeContent ? pipeContent + '\n' + question : question;
-
-    const response = await this.llmService.question(prompt, model);
+    const response = await this.llmService.question(question, pipeContent, model);
 
     await Promise.all([
       this.archive.save({ description: question, content: response, type: 'question' }),

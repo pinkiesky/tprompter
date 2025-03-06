@@ -10,6 +10,7 @@ export class CLIArgumentsToAppConfigMapper {
     return {
       quiet: AppConfigDataValuesTransformers.quiet(args.quiet, false),
       verbose: AppConfigDataValuesTransformers.verbose(args.verbose, false),
+      appName: AppConfigDataValuesTransformers.appName(args.$0, false),
     };
   }
 }

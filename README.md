@@ -1,4 +1,5 @@
 # ❯ tprompter
+
 ```bash
 $ ask anything
 ```
@@ -74,7 +75,6 @@ tprompter ask --after=print_raw "I need plain output"
 The model is aware of the OS and shell version
 
 ![ask usage example (get os and shell version)](readmeAssets/ask.gif)
-
 
 ### Run an Agent
 
@@ -156,14 +156,14 @@ npm run install:local
 
 ## Out-of-the-Box Available Templates and Agents
 
-| Name             | Expected Input                                                                                     | Purpose                                                                                                   |
-| ---------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| write_unit_tests | Code followed by unit test examples                                                                | Generates unit tests for the provided code. Including examples improves the LLM’s output quality.         |
-| code_review      | Code                                                                                               | Generates a code review for the provided code.                                                            |
-| starter          | Code or any text of your choice                                                                    | Generates a starter prompt (e.g., "I will write you questions or ask for favors based on the code provided").|
-| commit_message   | Code (recommended: output from `git diff --staged`)                                                | Generates a commit message based on your code changes.                                                    |
-| changelog        | Code (recommended: output from `git log --oneline --since="2 weeks ago"` or `git diff v1..main`)    | Generates a changelog summarizing the changes.                                                            |
-| summary          | Any text                                                                                           | Generates a brief, structured summary of the provided text.                                               |
+| Name             | Expected Input                                                                                   | Purpose                                                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| write_unit_tests | Code followed by unit test examples                                                              | Generates unit tests for the provided code. Including examples improves the LLM’s output quality.             |
+| code_review      | Code                                                                                             | Generates a code review for the provided code.                                                                |
+| starter          | Code or any text of your choice                                                                  | Generates a starter prompt (e.g., "I will write you questions or ask for favors based on the code provided"). |
+| commit_message   | Code (recommended: output from `git diff --staged`)                                              | Generates a commit message based on your code changes.                                                        |
+| changelog        | Code (recommended: output from `git log --oneline --since="2 weeks ago"` or `git diff v1..main`) | Generates a changelog summarizing the changes.                                                                |
+| summary          | Any text                                                                                         | Generates a brief, structured summary of the provided text.                                                   |
 
 ## Usage
 
@@ -231,6 +231,7 @@ If you prefer to use your own templates instead of the built-in ones, you can in
 You can override a built-in template by installing a custom one with the same name.
 
 Example template:
+
 ```md
 You are an expert code converter. Please convert the following code to TypeScript.
 Do not output any explanation; you should just return a code!
@@ -241,7 +242,6 @@ ${readStdin('Enter the code')}
 ```
 
 To install the custom template, use one of the following methods:
-
 
 ```bash
 tprompter prompt install <name> <filepath>
@@ -313,7 +313,7 @@ include:
   - *.ts
 ```
 
-This configuration instructs tprompter to exclude node_modules, `.git`, `dist`, and `package-lock.json` from the embedding process. The logic is similar to that of a `.gitignore` file. 
+This configuration instructs tprompter to exclude node_modules, `.git`, `dist`, and `package-lock.json` from the embedding process. The logic is similar to that of a `.gitignore` file.
 
 Note that `node_modules`, `.git`, and `package-lock.json` are excluded by default.
 

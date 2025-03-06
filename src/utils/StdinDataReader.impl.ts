@@ -22,7 +22,10 @@ export class StdinDataReaderImpl implements StdinDataReader {
 
     return new Promise((resolve, reject) => {
       if (process.stdin.isTTY) {
-        console.log(chalk.green(`❯ Input required (Press CTRL+D to finish):`), placeholder);
+        console.log(
+          chalk.green(`❯ Input required (Press CTRL+D or type /EOF to finish):`),
+          placeholder,
+        );
       }
 
       const dirname = path.dirname(fileURLToPath(import.meta.url));

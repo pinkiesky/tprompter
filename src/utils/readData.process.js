@@ -6,6 +6,10 @@ function runChild() {
   let data = '';
 
   process.stdin.on('data', (chunk) => {
+    if (chunk.trim() === '/EOF') {
+      process.stdin.emit('end');
+    }
+
     data += chunk;
   });
 
